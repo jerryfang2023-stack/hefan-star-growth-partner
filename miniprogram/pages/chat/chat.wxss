@@ -1,0 +1,139 @@
+.chat-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 24rpx;
+}
+
+.messages {
+  flex: 1;
+  min-height: 0;
+  margin-top: 0;
+  padding-right: 2rpx;
+}
+
+.message-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 18rpx;
+}
+
+.message-child {
+  justify-content: flex-end;
+  margin-left: 56rpx;
+}
+
+.message-coach {
+  justify-content: flex-start;
+  margin-right: 56rpx;
+}
+
+.message-avatar {
+  width: 64rpx;
+  height: 64rpx;
+  flex: 0 0 64rpx;
+  margin-right: 14rpx;
+  border: 1rpx solid #dedbf4;
+  border-radius: 16rpx;
+  background: #eeecff;
+}
+
+.message-bubble {
+  max-width: calc(100% - 78rpx);
+  padding: 20rpx;
+  border-radius: 8rpx;
+  line-height: 1.55;
+}
+
+.message-child .message-bubble {
+  background: #eeecff;
+}
+
+.message-coach .message-bubble {
+  border: 1rpx solid #dedbf4;
+  background: #ffffff;
+}
+
+.message-label {
+  margin-bottom: 8rpx;
+  color: #6f6a8b;
+  font-size: 22rpx;
+}
+
+.message-text {
+  white-space: pre-wrap;
+  font-size: 28rpx;
+}
+
+.thinking-dots {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  min-height: 40rpx;
+}
+
+.thinking-dots view {
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 999rpx;
+  background: #6f6a8b;
+  animation: thinking-pulse 1s infinite ease-in-out;
+}
+
+.thinking-dots view:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.thinking-dots view:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes thinking-pulse {
+  0%,
+  80%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-4rpx);
+  }
+}
+
+.composer {
+  display: flex;
+  align-items: flex-end;
+  gap: 12rpx;
+  margin-top: 14rpx;
+  padding-top: 12rpx;
+  border-top: 1rpx solid #dedbf4;
+}
+
+.composer textarea {
+  flex: 1;
+  min-height: 66rpx;
+  max-height: 168rpx;
+  padding: 16rpx 20rpx;
+  border: 1rpx solid #d6d2ef;
+  border-radius: 24rpx;
+  background: #ffffff;
+  font-size: 26rpx;
+  line-height: 1.45;
+}
+
+.send-button {
+  width: 70rpx;
+  height: 70rpx;
+  flex: 0 0 70rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 999rpx;
+  color: #ffffff;
+  background: #5b5ce2;
+  font-size: 32rpx;
+  font-weight: 800;
+  line-height: 1;
+}

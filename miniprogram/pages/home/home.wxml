@@ -1,0 +1,137 @@
+<view class="page">
+  <view class="reward-overlay" wx:if="{{rewardToast.visible}}">
+    <view class="reward-panel">
+      <view class="reward-medal">答对了</view>
+      <view class="reward-points">+{{rewardToast.points}} 分</view>
+      <view class="reward-note">{{rewardToast.note}}</view>
+    </view>
+  </view>
+
+  <view class="home-hero">
+    <view class="hero-kicker">Star 的学习闯关地图</view>
+    <image class="quest-map" src="/assets/quest-map.jpg" mode="aspectFill" />
+    <view class="mission-dock">
+      <image class="mission-art" src="{{selectedMission.image}}" mode="aspectFill" />
+      <view>
+        <view class="mission-label">已选好</view>
+        <view class="mission-title">{{selectedMission.title}}</view>
+        <view class="mission-desc">{{selectedMission.desc}}</view>
+        <button class="primary-button start-button" bindtap="startSelectedMission">开始闯关</button>
+      </view>
+    </view>
+
+    <view class="home-playground" wx:if="{{playground}}">
+      <view class="play-kicker">{{playground.kicker}}</view>
+      <view class="play-title">{{playground.title}}</view>
+
+      <view class="level-row" wx:if="{{playground.mode === 'quest'}}">
+        <view>第 {{playground.level}} / {{playground.total}} 关</view>
+        <view>{{playground.score}} 分 · 连对 {{playground.streak}}</view>
+      </view>
+      <view class="progress-track" wx:if="{{playground.mode === 'quest'}}">
+        <view class="progress-fill" style="width: {{playground.progress}}%;"></view>
+      </view>
+      <view class="quest-meta" wx:if="{{playground.mode === 'quest' && !playground.complete}}">
+        <view class="quest-chip">难度 {{playground.difficulty}}</view>
+        <view class="quest-chip hot">答对 +{{playground.nextPoints}} 分</view>
+      </view>
+
+      <view class="play-question">{{playground.question}}</view>
+      <view class="mini-steps" wx:if="{{playground.steps.length}}">
+        <view class="mini-step" wx:for="{{playground.steps}}" wx:key="*this">{{item}}</view>
+      </view>
+
+      <view wx:if="{{playground.mode === 'quest' && !playground.complete}}">
+        <view class="answer-line" wx:if="{{playground.hasAnswer && !playground.answered}}">
+          <input class="play-input" value="{{playAnswer}}" placeholder="写答案..." bindinput="onAnswerInput" />
+          <button class="secondary-button compact-button" bindtap="checkPlayAnswer">提交</button>
+        </view>
+        <view class="answer-line" wx:if="{{playground.hasNote && !playground.answered}}">
+          <input class="play-input" value="{{playNote}}" placeholder="{{playground.notePlaceholder}}" bindinput="onNoteInput" />
+          <button class="secondary-button compact-button" bindtap="savePlayNote">过关</button>
+        </view>
+        <view class="play-feedback {{playground.feedbackType}}" wx:if="{{playground.feedback}}">
+          {{playground.feedback}}
+        </view>
+      </view>
+
+      <view class="play-answer" wx:if="{{playground.mode === 'card' && playground.answer && playground.showAnswer}}">
+        答案：{{playground.answer}}
+      </view>
+
+      <view class="play-actions">
+        <button
+          wx:if="{{playground.mode === 'quest' && playground.answered && !playground.complete}}"
+          class="secondary-button compact-button"
+          bindtap="nextLevel"
+        >
+          {{playground.nextLabel}}
+        </button>
+        <button
+          wx:if="{{playground.mode === 'quest' && playground.complete}}"
+          class="secondary-button compact-button"
+          bindtap="restartQuest"
+        >
+          再玩一轮
+        </button>
+        <button
+          wx:if="{{playground.mode === 'card' && playground.answer && !playground.showAnswer}}"
+          class="secondary-button compact-button"
+          bindtap="revealPlayAnswer"
+        >
+          看提示
+        </button>
+        <button
+          wx:if="{{playground.mode === 'card'}}"
+          class="secondary-button compact-button"
+          bindtap="finishPlay"
+        >
+          完成了
+        </button>
+        <button class="secondary-button compact-button ghost-button" bindtap="askHefan">继续问盒饭</button>
+        <button
+          wx:if="{{playground.mode === 'quest' && !playground.complete}}"
+          class="secondary-button compact-button ghost-button"
+          bindtap="restartQuest"
+        >
+          重开
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">学习游戏</view>
+    <view class="quest-grid">
+      <button
+        wx:for="{{learningModule.actions}}"
+        wx:for-item="action"
+        wx:key="title"
+        class="quest-card {{action.visual}} {{selectedMission.title === action.title ? 'active' : ''}}"
+        data-kind="{{action.kind}}"
+        data-label="{{action.label}}"
+        data-title="{{action.title}}"
+        data-desc="{{action.desc}}"
+        data-image="{{action.image}}"
+        data-visual="{{action.visual}}"
+        data-prompt="{{action.prompt}}"
+        bindtap="selectMission"
+      >
+        <image
+          wx:if="{{action.visual === 'feature' || action.visual === 'split'}}"
+          class="quest-card-art"
+          src="{{action.image}}"
+          mode="aspectFill"
+        />
+        <view wx:else class="quest-card-mark">{{action.mark}}</view>
+        <view class="quest-card-body">
+          <view class="quest-card-title">{{action.title}}</view>
+          <view class="quest-card-desc">{{action.desc}}</view>
+          <view class="quest-card-tags">
+            <text class="quest-card-tag" wx:for="{{action.meta}}" wx:key="*this">{{item}}</text>
+          </view>
+        </view>
+      </button>
+    </view>
+  </view>
+</view>

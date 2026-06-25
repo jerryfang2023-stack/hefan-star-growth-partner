@@ -1,0 +1,37 @@
+<view class="page chat-page">
+  <scroll-view class="messages" scroll-y="true" scroll-into-view="{{lastMessageId}}">
+    <view
+      wx:for="{{messages}}"
+      wx:key="id"
+      id="{{item.id}}"
+      class="message-row {{item.role === 'child' ? 'message-child' : 'message-coach'}}"
+    >
+      <image
+        wx:if="{{item.role !== 'child'}}"
+        class="message-avatar"
+        src="/assets/hefan-avatar.png"
+        mode="aspectFill"
+      />
+      <view class="message-bubble">
+        <view class="message-label">{{item.role === 'child' ? '我' : '盒饭'}}</view>
+        <view wx:if="{{item.thinking}}" class="thinking-dots" aria-label="盒饭正在想">
+          <view></view>
+          <view></view>
+          <view></view>
+        </view>
+        <view wx:else class="message-text">{{item.text}}</view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="composer">
+    <textarea
+      value="{{draft}}"
+      maxlength="500"
+      auto-height="true"
+      placeholder="问盒饭..."
+      bindinput="onInput"
+    />
+    <button class="send-button" loading="{{sending}}" bindtap="sendMessage">↑</button>
+  </view>
+</view>

@@ -1,0 +1,33 @@
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12rpx;
+}
+
+.metric {
+  padding: 20rpx 12rpx;
+  text-align: center;
+}
+
+.metric-value {
+  margin-bottom: 8rpx;
+  color: #5b5ce2;
+  font-size: 40rpx;
+  font-weight: 700;
+}
+
+.risk-item {
+  padding: 14rpx 0;
+  border-bottom: 1rpx solid #edf2ef;
+}
+
+.risk-item:last-child {
+  border-bottom: 0;
+}
+
+.risk-level {
+  margin-bottom: 6rpx;
+  color: #8a4b1f;
+  font-size: 26rpx;
+  font-weight: 700;
+}

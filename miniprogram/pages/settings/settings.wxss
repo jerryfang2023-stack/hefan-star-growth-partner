@@ -1,0 +1,479 @@
+.profile-hero {
+  margin-top: 24rpx;
+  padding: 26rpx;
+  border-radius: 8rpx;
+  color: #ffffff;
+  background: linear-gradient(135deg, rgba(91, 92, 226, 0.96), rgba(42, 168, 198, 0.86)), #29265f;
+}
+
+.profile-name {
+  font-size: 34rpx;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.profile-subtitle {
+  margin-top: 10rpx;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 24rpx;
+  line-height: 1.45;
+}
+
+.achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14rpx;
+  margin-top: 22rpx;
+}
+
+.achievement-stat {
+  padding: 18rpx 12rpx;
+  border-radius: 8rpx;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.stat-number {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.stat-label {
+  display: block;
+  margin-top: 8rpx;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 22rpx;
+}
+
+.bento-shop {
+  overflow: hidden;
+  border-color: #e5def4;
+  background: linear-gradient(180deg, #fffdf8, #f7f3ff 58%, #ffffff), #ffffff;
+}
+
+.bento-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18rpx;
+}
+
+.bento-wallet {
+  min-width: 142rpx;
+  padding: 12rpx 14rpx;
+  border-radius: 8rpx;
+  color: #4a35a3;
+  background: #f0edff;
+  text-align: center;
+  font-size: 21rpx;
+  font-weight: 800;
+}
+
+.wallet-number {
+  display: block;
+  margin-top: 4rpx;
+  color: #24213a;
+  font-size: 34rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.bento-stage {
+  margin-top: 22rpx;
+  padding: 22rpx;
+  border: 1rpx solid #eaded0;
+  border-radius: 8rpx;
+  background: linear-gradient(135deg, rgba(255, 239, 207, 0.75), rgba(235, 244, 255, 0.86)), #fffaf1;
+}
+
+.bento-upgrade-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14rpx;
+  align-items: center;
+  margin-bottom: 18rpx;
+  padding: 16rpx;
+  border: 1rpx solid rgba(213, 185, 142, 0.72);
+  border-radius: 8rpx;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.upgrade-title {
+  color: #6e5128;
+  font-size: 25rpx;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.upgrade-meta {
+  margin-top: 6rpx;
+  color: #8a6a41;
+  font-size: 21rpx;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.lunchbox {
+  min-height: 306rpx;
+  padding: 22rpx;
+  border: 3rpx solid #d6b98e;
+  border-radius: 8rpx;
+  background: #fff7e7;
+  box-shadow: inset 0 0 0 12rpx rgba(255, 255, 255, 0.72), 0 16rpx 34rpx rgba(97, 70, 38, 0.1);
+}
+
+.lunchbox-title {
+  color: #6e5128;
+  font-size: 23rpx;
+  font-weight: 900;
+}
+
+.bento-slots {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14rpx;
+  margin-top: 18rpx;
+}
+
+.bento-slot {
+  min-height: 92rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1rpx dashed #cfb891;
+  border-radius: 8rpx;
+  color: #a08662;
+  background: rgba(255, 255, 255, 0.62);
+  font-size: 22rpx;
+  font-weight: 800;
+}
+
+.bento-piece {
+  min-height: 92rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18rpx;
+  color: #2d294f;
+  background: #ffffff;
+  font-size: 28rpx;
+  font-weight: 900;
+  box-shadow: 0 12rpx 24rpx rgba(72, 55, 27, 0.12);
+}
+
+.food-image {
+  width: 74rpx;
+  height: 74rpx;
+  display: block;
+}
+
+.bento-piece.rice {
+  background: linear-gradient(145deg, #ffffff, #f1edf8);
+}
+
+.bento-piece.cabbage {
+  background: linear-gradient(145deg, #e8ffd9, #86d06f);
+}
+
+.bento-piece.drumstick {
+  background: linear-gradient(145deg, #ffe1b8, #d98940);
+}
+
+.bento-piece.egg {
+  background: linear-gradient(145deg, #fff6c3, #f4c547);
+}
+
+.bento-piece.corn {
+  background: linear-gradient(145deg, #fff0a6, #e5a925);
+}
+
+.bento-piece.shrimp {
+  background: linear-gradient(145deg, #ffd8d7, #ff8e82);
+}
+
+.bento-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 18rpx;
+}
+
+.bento-action {
+  min-height: 54rpx;
+  margin: 0;
+  padding: 0 18rpx;
+  border-radius: 8rpx;
+  color: #4a35a3;
+  background: #efedff;
+  font-size: 23rpx;
+  font-weight: 800;
+  line-height: 54rpx;
+}
+
+.bento-feedback {
+  margin-top: 18rpx;
+  color: #4a35a3;
+  font-size: 23rpx;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.sub-title {
+  margin-top: 24rpx;
+  color: #24213a;
+  font-size: 27rpx;
+  font-weight: 900;
+}
+
+.ingredient-shop,
+.customer-list {
+  display: grid;
+  gap: 14rpx;
+  margin-top: 16rpx;
+}
+
+.ingredient-card,
+.customer-card {
+  display: grid;
+  grid-template-columns: 76rpx minmax(0, 1fr) auto;
+  gap: 14rpx;
+  align-items: center;
+  padding: 14rpx;
+  border: 1rpx solid #ece5f4;
+  border-radius: 8rpx;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.ingredient-card.locked {
+  filter: grayscale(0.75);
+  opacity: 0.72;
+}
+
+.ingredient-icon,
+.customer-icon {
+  width: 76rpx;
+  height: 76rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8rpx;
+  color: #2d294f;
+  background: #f0edff;
+  font-size: 26rpx;
+  font-weight: 900;
+}
+
+.ingredient-icon .food-image {
+  width: 66rpx;
+  height: 66rpx;
+}
+
+.ingredient-name,
+.customer-name {
+  color: #2d294f;
+  font-size: 25rpx;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.ingredient-meta,
+.customer-request {
+  margin-top: 6rpx;
+  color: #6f6a8b;
+  font-size: 21rpx;
+  line-height: 1.35;
+}
+
+.bento-buy,
+.bento-serve {
+  min-height: 54rpx;
+  margin: 0;
+  padding: 0 16rpx;
+  border-radius: 8rpx;
+  color: #ffffff;
+  background: #5b5ce2;
+  font-size: 22rpx;
+  font-weight: 800;
+  line-height: 54rpx;
+  white-space: nowrap;
+}
+
+.bento-buy[disabled],
+.bento-serve[disabled] {
+  color: #8b879f;
+  background: #ebe8f5;
+}
+
+.badge-grid {
+  display: grid;
+  gap: 18rpx;
+}
+
+.badge-family {
+  padding: 20rpx;
+  border: 1rpx solid rgba(104, 96, 224, 0.18);
+  border-radius: 8rpx;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(242, 239, 255, 0.94));
+  box-shadow: inset 0 2rpx 0 rgba(255, 255, 255, 0.85);
+}
+
+.record-item {
+  padding: 18rpx;
+  border: 1rpx solid #ece9fb;
+  border-radius: 8rpx;
+  background: #faf9ff;
+}
+
+.badge-family-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.badge-name {
+  color: #2d294f;
+  font-size: 25rpx;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.badge-best {
+  color: #6f6a8b;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.badge-levels {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14rpx;
+  margin-top: 18rpx;
+}
+
+.badge-level {
+  min-height: 148rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  padding: 16rpx 8rpx;
+  border: 1rpx solid #d7d4e8;
+  border-radius: 8rpx;
+  color: #8a869b;
+  background: linear-gradient(145deg, #f1eff8, #dedcec);
+  text-align: center;
+  box-shadow: inset 0 2rpx 0 rgba(255, 255, 255, 0.7);
+}
+
+.badge-level.unlocked {
+  color: #272344;
+  box-shadow: 0 16rpx 36rpx rgba(36, 33, 58, 0.16), inset 0 2rpx 0 rgba(255, 255, 255, 0.82);
+}
+
+.badge-level.starter.unlocked {
+  border-color: #7eb6ff;
+  background: linear-gradient(145deg, #eaf5ff, #7fb4ff 55%, #4e78ff);
+}
+
+.badge-level.bronze.unlocked {
+  border-color: #d5965f;
+  background: linear-gradient(145deg, #fff0d9, #d69355 55%, #9f572f);
+}
+
+.badge-level.silver.unlocked {
+  border-color: #bcc7dc;
+  background: linear-gradient(145deg, #ffffff, #c5d0e3 58%, #8494b2);
+}
+
+.badge-level.gold.unlocked {
+  border-color: #f0c24d;
+  background: linear-gradient(145deg, #fff8c6, #f4bd39 55%, #c97a17);
+}
+
+.badge-level.crystal.unlocked {
+  border-color: #7dd7ff;
+  background: linear-gradient(145deg, #effcff, #91e1ff 48%, #7b7cff);
+}
+
+.badge-level.galaxy.unlocked {
+  border-color: #9b8cff;
+  color: #ffffff;
+  background: linear-gradient(145deg, #36216f, #6757ff 52%, #18b6ff);
+}
+
+.badge-icon {
+  width: 58rpx;
+  height: 58rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999rpx;
+  color: inherit;
+  border: 1rpx solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.42);
+  box-shadow: inset 0 -6rpx 14rpx rgba(45, 41, 79, 0.1);
+  font-size: 24rpx;
+  font-weight: 900;
+}
+
+.badge-level-name {
+  font-size: 23rpx;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.badge-target {
+  color: rgba(36, 33, 58, 0.64);
+  font-size: 20rpx;
+  line-height: 1.2;
+}
+
+.badge-level.locked .badge-icon {
+  color: #8b879a;
+  border-color: rgba(255, 255, 255, 0.4);
+  background: #d8d6e5;
+}
+
+.badge-level.locked .badge-target {
+  color: #8c889c;
+}
+
+.record-title {
+  color: #2d294f;
+  font-size: 25rpx;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.record-list {
+  display: grid;
+  gap: 14rpx;
+}
+
+.record-meta {
+  margin-top: 8rpx;
+  color: #6f6a8b;
+  font-size: 23rpx;
+  line-height: 1.45;
+}
+
+.field {
+  margin-bottom: 22rpx;
+}
+
+.field-label {
+  margin-bottom: 10rpx;
+  color: #2d294f;
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}

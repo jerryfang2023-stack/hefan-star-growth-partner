@@ -1,0 +1,20 @@
+<view class="page">
+  <view class="title">15-25 分钟计划</view>
+  <view class="subtitle">把大目标变成每天能完成的小任务。</view>
+
+  <view class="section">
+    <button class="secondary-button" loading="{{loading}}" bindtap="regeneratePlan">重新生成本周计划</button>
+  </view>
+
+  <view class="section">
+    <view wx:for="{{plan}}" wx:key="day" class="card plan-card">
+      <view class="plan-topline">
+        <view class="plan-day">{{item.day}}</view>
+        <view class="plan-minutes">{{item.minutes}} 分钟</view>
+      </view>
+      <view class="plan-title">{{item.title}}</view>
+      <view class="muted">{{item.subject}} · {{item.status}}</view>
+      <view class="step" wx:for="{{item.steps}}" wx:key="*this">{{index + 1}}. {{item}}</view>
+    </view>
+  </view>
+</view>

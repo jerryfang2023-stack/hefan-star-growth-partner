@@ -1,0 +1,46 @@
+<view class="page">
+  <view class="title">家长观察视图</view>
+  <view class="subtitle">只看学习摘要和风险提醒，不展示孩子完整聊天。</view>
+
+  <view class="section metrics">
+    <view class="card metric">
+      <view class="metric-value">{{summary.todayMinutes}}</view>
+      <view class="muted">今日分钟</view>
+    </view>
+    <view class="card metric">
+      <view class="metric-value">{{summary.weeklyMinutes}}</view>
+      <view class="muted">本周分钟</view>
+    </view>
+    <view class="card metric">
+      <view class="metric-value">{{summary.dailyLimitMinutes}}</view>
+      <view class="muted">每日上限</view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">学习主题</view>
+    <view class="card">
+      <text wx:for="{{summary.learningTopics}}" wx:key="*this" class="tag">{{item}}</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">薄弱点</view>
+    <view class="card">
+      <text wx:for="{{summary.weakPoints}}" wx:key="*this" class="tag">{{item}}</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">风险提醒</view>
+    <view class="card">
+      <view wx:if="{{summary.riskAlerts.length === 0}}" class="muted">暂无风险提醒。</view>
+      <view wx:for="{{summary.riskAlerts}}" wx:key="time" class="risk-item">
+        <view class="risk-level">{{item.level}} · {{item.category}}</view>
+        <view class="muted">{{item.summary}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section card muted">{{summary.privacyNote}}</view>
+</view>

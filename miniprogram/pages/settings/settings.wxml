@@ -1,0 +1,135 @@
+<view class="page">
+  <view class="title">个人中心</view>
+  <view class="subtitle">Star 的闯关成绩会保存在这里。</view>
+
+  <view class="profile-hero">
+    <view class="profile-name">Star 的成绩</view>
+    <view class="profile-subtitle">只保存学习闯关的分数、徽章和最近记录。</view>
+    <view class="achievement-grid">
+      <view class="achievement-stat">
+        <text class="stat-number">{{achievements.totalScore}}</text>
+        <text class="stat-label">总积分</text>
+      </view>
+      <view class="achievement-stat">
+        <text class="stat-number">{{achievements.unlockedBadgeCount}}</text>
+        <text class="stat-label">点亮</text>
+      </view>
+      <view class="achievement-stat">
+        <text class="stat-number">{{achievements.records.length}}</text>
+        <text class="stat-label">闯关</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section card bento-shop">
+    <view class="bento-head">
+      <view>
+        <view class="section-title">盒饭小店</view>
+        <view class="muted">用闯关积分解锁食材，按顾客要求装盒饭。</view>
+      </view>
+      <view class="bento-wallet">
+        <text>可用积分</text>
+        <text class="wallet-number">{{bento.availablePoints}}</text>
+      </view>
+    </view>
+
+    <view class="bento-stage">
+      <view class="bento-upgrade-card">
+        <view>
+          <view class="upgrade-title">饭盒容量 Lv.{{bento.capacity.level}}</view>
+          <view class="upgrade-meta">
+            现在 {{bento.capacity.value}} 格 ·
+            <text wx:if="{{bento.capacity.maxed}}">最多 11 格</text>
+            <text wx:else>下一级 {{bento.capacity.nextValue}} 格</text>
+          </view>
+        </view>
+        <button class="bento-buy" disabled="{{bento.capacity.disabled}}" bindtap="upgradeBentoCapacity">
+          {{bento.capacity.buttonText}}
+        </button>
+      </view>
+      <view class="lunchbox">
+        <view class="lunchbox-title">空盒饭 · {{bento.capacity.value}} 格</view>
+        <view class="bento-slots">
+          <view class="{{item.className}}" wx:for="{{bento.lunchboxSlots}}" wx:key="id">
+            <image wx:if="{{item.filled}}" class="food-image" src="{{item.asset}}" mode="aspectFit" />
+            <text wx:else>{{item.mark}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="bento-actions">
+        <button
+          class="bento-action"
+          wx:for="{{bento.unlockedIngredients}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="addBentoIngredient"
+        >
+          装{{item.name}}
+        </button>
+        <button class="bento-action" bindtap="clearBento">清空盒饭</button>
+      </view>
+    </view>
+
+    <view class="bento-feedback">{{bento.feedback}}</view>
+
+    <view class="sub-title">食材解锁</view>
+    <view class="ingredient-shop">
+      <view class="{{item.cardClass}}" wx:for="{{bento.ingredients}}" wx:key="key">
+        <view class="ingredient-icon">
+          <image class="food-image" src="{{item.asset}}" mode="aspectFit" />
+        </view>
+        <view>
+          <view class="ingredient-name">{{item.name}}</view>
+          <view class="ingredient-meta">等级 {{item.level}} · 价格 {{item.price}} 分</view>
+        </view>
+        <button class="bento-buy" disabled="{{item.disabled}}" data-key="{{item.key}}" bindtap="buyBentoIngredient">
+          {{item.buttonText}}
+        </button>
+      </view>
+    </view>
+
+    <view class="sub-title">今日顾客</view>
+    <view class="customer-list">
+      <view class="customer-card" wx:for="{{bento.customers}}" wx:key="key">
+        <view class="customer-icon">{{item.initial}}</view>
+        <view>
+          <view class="customer-name">{{item.name}}</view>
+          <view class="customer-request">{{item.note}} 要：{{item.requestText}}</view>
+        </view>
+        <button class="bento-serve" disabled="{{item.disabled}}" data-key="{{item.key}}" bindtap="serveBentoCustomer">
+          {{item.buttonText}}
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <view class="section card">
+    <view class="section-title">我的徽章</view>
+    <view class="badge-grid">
+      <view class="badge-family" wx:for="{{achievements.badgeFamilies}}" wx:key="kind">
+        <view class="badge-family-head">
+          <view class="badge-name">{{item.title}}</view>
+          <view class="badge-best">累计 {{item.progressScore}} 分</view>
+        </view>
+        <view class="badge-levels">
+          <view class="{{level.className}}" wx:for="{{item.levels}}" wx:for-item="level" wx:key="key">
+            <view class="badge-icon">{{item.icon}}</view>
+            <view class="badge-level-name">{{level.name}}</view>
+            <view class="badge-target">{{level.statusText}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section card">
+    <view class="section-title">最近闯关</view>
+    <view class="record-list" wx:if="{{achievements.records.length}}">
+      <view class="record-item" wx:for="{{achievements.records}}" wx:key="completedAt">
+        <view class="record-title">{{item.title}} · {{item.score}} 分</view>
+        <view class="record-meta">{{item.badge}} · 连对 {{item.streak}} · {{item.displayDate}}</view>
+      </view>
+    </view>
+    <view class="muted" wx:else>最近还没有完整闯关记录。</view>
+  </view>
+</view>
