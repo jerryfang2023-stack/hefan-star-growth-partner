@@ -1088,6 +1088,17 @@
       font-size: 12px;
     }
 
+    .plan-section-note {
+      margin: 14px 0 10px;
+      color: #24213a;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .plan-history-title {
+      margin-top: 18px;
+    }
+
     .card {
       padding: 15px;
       border: 1px solid var(--line);
@@ -1754,7 +1765,7 @@
     <header class="app-header">
       <div class="app-title-row">
         <h1 class="app-title">Star 小宇宙</h1>
-        <span class="pill">Hermes mock</span>
+        <span class="pill">Hermes demo</span>
       </div>
     </header>
 
@@ -1762,9 +1773,9 @@
       <section id="home" class="view active">
         <div class="home-hero">
           <div class="hero-kicker">Star 的学习闯关地图</div>
-          <img class="quest-map" src="./assets/quest-map.jpg?v=learning-map-1" alt="学习闯关地图" />
+          <img class="quest-map" src="/assets/quest-map.jpg?v=learning-map-1" alt="学习闯关地图" />
           <div class="mission-dock">
-            <img id="selected-mission-art" class="mission-art" src="./assets/game-english.jpg?v=learning-card-1" alt="" />
+            <img id="selected-mission-art" class="mission-art" src="/assets/game-english.jpg?v=learning-card-1" alt="" />
             <div>
               <div class="mission-label">已选好</div>
               <div id="selected-mission-title" class="mission-title">单词猜猜看</div>
@@ -1782,27 +1793,27 @@
             <span class="section-title">学习游戏</span>
           </div>
           <div class="quest-grid">
-            <button class="quest-card feature mission-option active" data-kind="word" data-title="单词猜猜看" data-desc="听线索，猜英文。" data-art="./assets/game-english.jpg?v=learning-card-1" data-prompt="盒饭，玩一局猜单词。你给我三个提示，我来猜。猜完帮我造个例句。">
-              <img class="quest-card-art" src="./assets/game-english.jpg?v=learning-card-1" alt="" />
+            <button class="quest-card feature mission-option active" data-kind="word" data-title="单词猜猜看" data-desc="听线索，猜英文。" data-art="/assets/game-english.jpg?v=learning-card-1" data-prompt="盒饭，玩一局猜单词。你给我三个提示，我来猜。猜完帮我造个例句。">
+              <img class="quest-card-art" src="/assets/game-english.jpg?v=learning-card-1" alt="" />
               <span class="quest-card-body"><span class="quest-card-title">单词猜猜看</span><span class="quest-card-desc">家庭、朋友、外出主题词</span><span class="quest-card-tags"><span class="quest-card-tag">英语</span><span class="quest-card-tag">连击加分</span></span></span>
             </button>
-            <button class="quest-card split mission-option" data-kind="math" data-title="数学换条路" data-desc="一步一步解开。" data-art="./assets/game-math.jpg?v=learning-card-1" data-prompt="盒饭，我想把一道数学题换个思路做。你先问我题目，再带我找两种解法。">
+            <button class="quest-card split mission-option" data-kind="math" data-title="数学换条路" data-desc="一步一步解开。" data-art="/assets/game-math.jpg?v=learning-card-1" data-prompt="盒饭，我想把一道数学题换个思路做。你先问我题目，再带我找两种解法。">
               <span class="quest-card-body"><span class="quest-card-title">数学换条路</span><span class="quest-card-desc">有理数、比例、百分比</span><span class="quest-card-tags"><span class="quest-card-tag">数学</span><span class="quest-card-tag">难度上升</span></span></span>
-              <img class="quest-card-art" src="./assets/game-math.jpg?v=learning-card-1" alt="" />
+              <img class="quest-card-art" src="/assets/game-math.jpg?v=learning-card-1" alt="" />
             </button>
-            <button class="quest-card scroll mission-option" data-kind="idiom" data-title="诗词小侦探" data-desc="看诗句，抓线索。" data-art="./assets/game-poetry.jpg?v=learning-card-1" data-prompt="盒饭，玩一局诗词小侦探。你给我一句公开古诗词线索，我来猜作者、意象或意思。">
+            <button class="quest-card scroll mission-option" data-kind="idiom" data-title="诗词小侦探" data-desc="看诗句，抓线索。" data-art="/assets/game-poetry.jpg?v=learning-card-1" data-prompt="盒饭，玩一局诗词小侦探。你给我一句公开古诗词线索，我来猜作者、意象或意思。">
               <span class="quest-card-mark">诗</span>
               <span class="quest-card-body"><span class="quest-card-title">诗词小侦探</span><span class="quest-card-desc">作者、意象、情绪线索</span><span class="quest-card-tags"><span class="quest-card-tag">语文</span><span class="quest-card-tag">观察力</span></span></span>
             </button>
-            <button class="quest-card note mission-option" data-kind="mistake" data-title="错题翻盘" data-desc="找错因，再来一题。" data-art="./assets/game-review.jpg?v=learning-card-1" data-prompt="盒饭，我有一道错题想翻盘。你先问我题目和错在哪里，再给我一道类似的小练习。">
+            <button class="quest-card note mission-option" data-kind="mistake" data-title="错题翻盘" data-desc="找错因，再来一题。" data-art="/assets/game-review.jpg?v=learning-card-1" data-prompt="盒饭，我有一道错题想翻盘。你先问我题目和错在哪里，再给我一道类似的小练习。">
               <span class="quest-card-mark">错</span>
               <span class="quest-card-body"><span class="quest-card-title">错题翻盘</span><span class="quest-card-desc">把卡住的地方变成分数</span><span class="quest-card-tags"><span class="quest-card-tag">复盘</span><span class="quest-card-tag">稳一点</span></span></span>
             </button>
-            <button class="quest-card mini mission-option" data-kind="reading" data-title="课文找线索" data-desc="找关键词和小秘密。" data-art="./assets/game-poetry.jpg?v=learning-card-1" data-prompt="盒饭，陪我给课文找线索。你先问我课文名，再带我找关键词、中心句和人物变化。">
+            <button class="quest-card mini mission-option" data-kind="reading" data-title="课文找线索" data-desc="找关键词和小秘密。" data-art="/assets/game-poetry.jpg?v=learning-card-1" data-prompt="盒饭，陪我给课文找线索。你先问我课文名，再带我找关键词、中心句和人物变化。">
               <span class="quest-card-mark">读</span>
               <span class="quest-card-body"><span class="quest-card-title">课文找线索</span><span class="quest-card-desc">标题、重复词、人物变化</span><span class="quest-card-tags"><span class="quest-card-tag">阅读</span><span class="quest-card-tag">找证据</span></span></span>
             </button>
-            <button class="quest-card mini calm mission-option" data-kind="preview" data-title="明天小预告" data-desc="复习一点，预习一点。" data-art="./assets/game-review.jpg?v=learning-card-1" data-prompt="盒饭，帮我做一个明天小预告。先问我今天学了什么、明天学什么，再排一个短短的复习预习安排。">
+            <button class="quest-card mini calm mission-option" data-kind="preview" data-title="明天小预告" data-desc="复习一点，预习一点。" data-art="/assets/game-review.jpg?v=learning-card-1" data-prompt="盒饭，帮我做一个明天小预告。先问我今天学了什么、明天学什么，再排一个短短的复习预习安排。">
               <span class="quest-card-mark">预</span>
               <span class="quest-card-body"><span class="quest-card-title">明天小预告</span><span class="quest-card-desc">给明天留一个小开局</span><span class="quest-card-tags"><span class="quest-card-tag">预习</span><span class="quest-card-tag">轻任务</span></span></span>
             </button>
@@ -1821,7 +1832,7 @@
       <section id="plan" class="view">
         <div class="section-head">
           <span class="section-title">计划中心</span>
-          <button id="regen-plan" class="secondary">补一组计划</button>
+          <button id="regen-plan" class="secondary">生成今日建议</button>
         </div>
         <div id="plan-dashboard"></div>
         <div id="plan-form"></div>
@@ -1931,7 +1942,7 @@
         title: '单词猜猜看',
         desc: '听线索，猜英文。',
         prompt: '盒饭，玩一局猜单词。你给我三个提示，我来猜。猜完帮我造个例句。',
-        art: './assets/game-english.jpg?v=learning-card-1'
+        art: '/assets/game-english.jpg?v=learning-card-1'
       },
       homePlaygroundOpen: false,
       gameState: {},
@@ -1962,25 +1973,13 @@
         status: 'todo',
         reason: '',
         steps: ['热身 2 分钟', '低重心移动 6 组', '记一个今天最稳的动作']
-      },
-      {
-        id: 'music-rhythm-practice',
-        type: 'music',
-        title: '节奏 8 拍练习',
-        minutes: 10,
-        status: 'doing',
-        reason: '',
-        steps: ['拍手数 8 拍', '跟一段节奏', '录 10 秒听一遍']
-      },
-      {
-        id: 'habit-bedtime-bag',
-        type: 'habit',
-        title: '睡前整理书包',
-        minutes: 6,
-        status: 'missed',
-        reason: '昨天太晚开始，今天提前到洗漱前。',
-        steps: ['看明天课程', '放好作业本', '水杯和钥匙放固定位置']
       }
+    ];
+    const REMOVED_DEMO_PLAN_IDS = [
+      'learning-api-1',
+      'learning-api-2',
+      'music-rhythm-practice',
+      'habit-bedtime-bag'
     ];
 
     const playCards = {
@@ -2407,16 +2406,16 @@
       }
       if (path === '/api/plan') {
         return { plan: [
-          { day: '今天', title: '英语猜词 10 分钟', subject: '英语', minutes: 10, status: '待开始', steps: ['看线索', '猜英文', '错了再试一次'] },
-          { day: '今天', title: '数学换条路 12 分钟', subject: '数学', minutes: 12, status: '待开始', steps: ['读题', '列式', '换一种解法'] },
+          { day: '今天', title: '猜单词和表达热身', subject: '英语', minutes: 20, status: '进行中', steps: ['猜 5 个核心单词', '说出一个例句', '复盘 1 个易错词'] },
+          { day: '今天', title: '数学换条路', subject: '数学', minutes: 12, status: '待开始', steps: ['读题', '列式', '换一种解法'] },
           { day: '明天', title: '古诗词小关', subject: '语文', minutes: 10, status: '待开始', steps: ['读一句', '补一句', '说意思'] }
         ] };
       }
       if (path === '/api/chat') {
-        return { answer: '这是 GitHub Pages 演示版，后端和 Hermes 还没有部署。你可以先体验页面、闯关、积分和盒饭小店。', provider: 'github-pages-demo' };
+        return { answer: '这是 GitHub Pages 演示版，后端和 Hermes 还没有部署。你可以先体验页面、闯关、积分、计划和盒饭小店。', provider: 'github-pages-demo' };
       }
       if (path === '/api/parent-summary') {
-        return { summary: { todayMinutes: 5, weeklyMinutes: 25, dailyLimitMinutes: 25, learningTopics: ['英语猜词', '数学换路'], weakPoints: ['词汇复习', '应用题列式'], riskAlerts: [], privacyNote: '演示版只展示摘要，不展示私密聊天。' } };
+        return { summary: { todayMinutes: 5, weeklyMinutes: 25, dailyLimitMinutes: 25, learningTopics: ['英语猜词', '数学换思路'], weakPoints: ['词汇复习', '应用题列式'], riskAlerts: [], privacyNote: '演示版只展示摘要，不展示私密聊天。' } };
       }
       return {};
     }
@@ -2470,12 +2469,12 @@
     ];
     const BENTO_KEY = 'hefan-star-bento-v1';
     const BENTO_INGREDIENTS = [
-      { key: 'rice', name: '大米饭', mark: '饭', price: 3, level: 1, asset: './assets/food-rice.png?v=bento-food-1' },
-      { key: 'cabbage', name: '白菜', mark: '菜', price: 8, level: 2, asset: './assets/food-cabbage.png?v=bento-food-1' },
-      { key: 'drumstick', name: '鸡腿', mark: '腿', price: 15, level: 3, asset: './assets/food-drumstick.png?v=bento-food-1' },
-      { key: 'egg', name: '煎蛋', mark: '蛋', price: 28, level: 4, asset: './assets/food-egg.png?v=bento-food-1' },
-      { key: 'corn', name: '玉米', mark: '玉', price: 45, level: 5, asset: './assets/food-corn.png?v=bento-food-1' },
-      { key: 'shrimp', name: '虾仁', mark: '虾', price: 70, level: 6, asset: './assets/food-shrimp.png?v=bento-food-1' }
+      { key: 'rice', name: '大米饭', mark: '饭', price: 3, level: 1, asset: '/assets/food-rice.png?v=bento-food-1' },
+      { key: 'cabbage', name: '白菜', mark: '菜', price: 8, level: 2, asset: '/assets/food-cabbage.png?v=bento-food-1' },
+      { key: 'drumstick', name: '鸡腿', mark: '腿', price: 15, level: 3, asset: '/assets/food-drumstick.png?v=bento-food-1' },
+      { key: 'egg', name: '煎蛋', mark: '蛋', price: 28, level: 4, asset: '/assets/food-egg.png?v=bento-food-1' },
+      { key: 'corn', name: '玉米', mark: '玉', price: 45, level: 5, asset: '/assets/food-corn.png?v=bento-food-1' },
+      { key: 'shrimp', name: '虾仁', mark: '虾', price: 70, level: 6, asset: '/assets/food-shrimp.png?v=bento-food-1' }
     ];
     const BENTO_CUSTOMERS = [
       { key: 'momo', name: '墨墨', request: ['rice', 'cabbage'], note: '今天想要清爽一点。' },
@@ -3244,9 +3243,9 @@
           const text = escapeHtml(message.text);
           if (message.role === 'coach') {
             if (message.thinking) {
-              return '<div class="message-row coach-row"><img class="message-avatar" src="./assets/hefan-avatar.png?v=hefan-512" alt="盒饭头像" /><div class="message coach"><span class="thinking-dots" aria-label="盒饭正在想"><span></span><span></span><span></span></span></div></div>';
+              return '<div class="message-row coach-row"><img class="message-avatar" src="/assets/hefan-avatar.png?v=hefan-512" alt="盒饭头像" /><div class="message coach"><span class="thinking-dots" aria-label="盒饭正在想"><span></span><span></span><span></span></span></div></div>';
             }
-            return '<div class="message-row coach-row"><img class="message-avatar" src="./assets/hefan-avatar.png?v=hefan-512" alt="盒饭头像" /><div class="message coach">' + text + '</div></div>';
+            return '<div class="message-row coach-row"><img class="message-avatar" src="/assets/hefan-avatar.png?v=hefan-512" alt="盒饭头像" /><div class="message coach">' + text + '</div></div>';
           }
           return '<div class="message-row child-row"><div class="message child">' + text + '</div></div>';
         })
@@ -3311,7 +3310,7 @@
     }
 
     function planItemsFromApi(apiPlan) {
-      const learning = (apiPlan || []).map(function (item, index) {
+      const learning = (apiPlan || []).slice(0, 1).map(function (item, index) {
         return normalizePlanItem({
           id: 'learning-api-' + index,
           type: 'learning',
@@ -3324,12 +3323,18 @@
       return learning.concat(EXTRA_PLAN_ITEMS.map(normalizePlanItem));
     }
 
+    function pruneDemoPlanItems(items) {
+      return items.filter(function (item) {
+        return !REMOVED_DEMO_PLAN_IDS.includes(item.id) || item.status === 'done' || item.status === 'missed';
+      });
+    }
+
     function loadPlanItems(apiPlan) {
       try {
         const raw = localStorage.getItem(PLAN_KEY);
         if (raw) {
           const saved = JSON.parse(raw);
-          if (Array.isArray(saved) && saved.length) return saved.map(normalizePlanItem);
+          if (Array.isArray(saved) && saved.length) return pruneDemoPlanItems(saved.map(normalizePlanItem));
         }
       } catch (error) {
         // Fall back to the generated MVP seed.
@@ -3339,6 +3344,7 @@
 
     function savePlanItems() {
       try {
+        state.planItems = pruneDemoPlanItems(state.planItems || []);
         localStorage.setItem(PLAN_KEY, JSON.stringify(state.planItems || []));
       } catch (error) {
         // Plan center still works for this session.
@@ -3367,6 +3373,18 @@
         missed: missed,
         rate: total ? Math.round((done / total) * 100) : 0
       };
+    }
+
+    function currentPlanItems() {
+      return (state.planItems || []).filter(function (item) {
+        return item.status !== 'done' && item.status !== 'missed';
+      });
+    }
+
+    function historicalPlanItems() {
+      return (state.planItems || []).filter(function (item) {
+        return item.status === 'done' || item.status === 'missed';
+      });
     }
 
     function renderPlanDashboard() {
@@ -3399,28 +3417,44 @@
       ].join('');
     }
 
-    function renderPlan() {
-      renderPlanDashboard();
-      renderPlanForm();
-      el('plan-list').innerHTML = (state.planItems || [])
-        .map(function (item) {
-          const type = planTypeByKey(item.type);
-          return [
-            '<article class="card plan-card ' + item.status + '">',
-            '<div class="plan-topline"><span class="plan-type">' + type.mark + ' ' + type.label + '</span><span class="plan-state">' + item.minutes + ' 分钟 · ' + planStatusLabel(item.status) + '</span></div>',
-            '<h3>' + escapeHtml(item.title) + '</h3>',
-            '<ol class="steps">' + item.steps.map(function (step) { return '<li>' + escapeHtml(step) + '</li>'; }).join('') + '</ol>',
-            item.status === 'missed' && item.reason ? '<div class="plan-reason">未完成原因：' + escapeHtml(item.reason) + '</div>' : '',
-            '<div class="plan-actions">',
+    function renderPlanCard(item) {
+      const type = planTypeByKey(item.type);
+      const actionButtons = item.status === 'done' || item.status === 'missed'
+        ? '<button data-plan-action="reset" data-plan-id="' + item.id + '">放回当前</button>'
+        : [
             '<button data-plan-action="done" data-plan-id="' + item.id + '">完成</button>',
             '<button data-plan-action="doing" data-plan-id="' + item.id + '">进行中</button>',
             '<button data-plan-action="missed" data-plan-id="' + item.id + '">未完成</button>',
-            '<button data-plan-action="reset" data-plan-id="' + item.id + '">重置</button>',
-            '</div>',
-            '</article>'
+            '<button data-plan-action="reset" data-plan-id="' + item.id + '">重置</button>'
           ].join('');
-        })
-        .join('');
+      return [
+        '<article class="card plan-card ' + item.status + '">',
+        '<div class="plan-topline"><span class="plan-type">' + type.mark + ' ' + type.label + '</span><span class="plan-state">' + item.minutes + ' 分钟 · ' + planStatusLabel(item.status) + '</span></div>',
+        '<h3>' + escapeHtml(item.title) + '</h3>',
+        '<ol class="steps">' + item.steps.map(function (step) { return '<li>' + escapeHtml(step) + '</li>'; }).join('') + '</ol>',
+        item.status === 'missed' && item.reason ? '<div class="plan-reason">未完成原因：' + escapeHtml(item.reason) + '</div>' : '',
+        '<div class="plan-actions">',
+        actionButtons,
+        '</div>',
+        '</article>'
+      ].join('');
+    }
+
+    function renderPlan() {
+      renderPlanDashboard();
+      renderPlanForm();
+      const currentItems = currentPlanItems();
+      const historyItems = historicalPlanItems();
+      el('plan-list').innerHTML = [
+        '<div class="plan-section-note">当前计划</div>',
+        currentItems.length
+          ? currentItems.map(renderPlanCard).join('')
+          : '<article class="card muted">当前没有待执行计划，可以新增一个。</article>',
+        '<div class="plan-section-note plan-history-title">历史计划</div>',
+        historyItems.length
+          ? historyItems.slice(0, 6).map(renderPlanCard).join('')
+          : '<article class="card muted">完成或未完成的计划会在这里出现。</article>'
+      ].join('');
     }
 
     function addPlanItem() {
@@ -3525,7 +3559,12 @@
         body: { goal: '稳住六年级数学和语文薄弱点' }
       });
       state.plan = result.plan;
-      state.planItems = planItemsFromApi(result.plan).concat(state.planItems || []);
+      const generatedItems = planItemsFromApi(result.plan);
+      const generatedIds = generatedItems.map(function (item) { return item.id; });
+      const retainedItems = (state.planItems || []).filter(function (item) {
+        return !generatedIds.includes(item.id) || item.status === 'done' || item.status === 'missed';
+      });
+      state.planItems = generatedItems.concat(retainedItems);
       savePlanItems();
       renderPlan();
     }
