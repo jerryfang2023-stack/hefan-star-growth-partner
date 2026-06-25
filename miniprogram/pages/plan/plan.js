@@ -226,6 +226,19 @@ Page({
     const { id, status } = event.currentTarget.dataset;
     const current = wx.getStorageSync(PLAN_STORAGE_KEY);
     const items = Array.isArray(current) ? current : [];
+    if (status === 'delete') {
+      wx.showModal({
+        title: '删除计划',
+        content: '确定删除这个计划吗？',
+        confirmText: '删除',
+        confirmColor: '#9a2f4d',
+        success: (result) => {
+          if (!result.confirm) return;
+          this.setPlans(items.filter((plan) => plan.id !== id));
+        },
+      });
+      return;
+    }
     const item = items.find((plan) => plan.id === id);
     if (!item) return;
     if (status === 'reset') {

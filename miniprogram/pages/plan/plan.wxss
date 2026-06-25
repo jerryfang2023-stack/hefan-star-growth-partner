@@ -144,3 +144,8 @@
   font-weight: 800;
   line-height: 54rpx;
 }
+
+.plan-actions .danger-button {
+  color: #9a2f4d;
+  background: #fff0f4;
+}

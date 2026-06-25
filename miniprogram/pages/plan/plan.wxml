@@ -55,6 +55,7 @@
         <button data-id="{{item.id}}" data-status="doing" bindtap="setPlanStatus">进行中</button>
         <button data-id="{{item.id}}" data-status="missed" bindtap="setPlanStatus">未完成</button>
         <button data-id="{{item.id}}" data-status="reset" bindtap="setPlanStatus">重置</button>
+        <button class="danger-button" data-id="{{item.id}}" data-status="delete" bindtap="setPlanStatus">删除</button>
       </view>
     </view>
     <view wx:if="{{!currentPlanItems.length}}" class="card muted">当前没有待执行计划，可以新增一个。</view>
@@ -72,6 +73,7 @@
       <view class="plan-reason" wx:if="{{item.showReason}}">未完成原因：{{item.reason}}</view>
       <view class="plan-actions">
         <button data-id="{{item.id}}" data-status="reset" bindtap="setPlanStatus">放回当前</button>
+        <button class="danger-button" data-id="{{item.id}}" data-status="delete" bindtap="setPlanStatus">删除</button>
       </view>
     </view>
     <view wx:if="{{!historyPlanItems.length}}" class="card muted">完成或未完成的计划会在这里出现。</view>
