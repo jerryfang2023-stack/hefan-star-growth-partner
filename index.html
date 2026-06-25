@@ -1257,6 +1257,11 @@
       font-weight: 850;
     }
 
+    .plan-actions button.danger {
+      color: #9a2f4d;
+      background: #fff0f4;
+    }
+
     .tag {
       display: inline-flex;
       margin: 6px 6px 0 0;
@@ -3420,12 +3425,16 @@
     function renderPlanCard(item) {
       const type = planTypeByKey(item.type);
       const actionButtons = item.status === 'done' || item.status === 'missed'
-        ? '<button data-plan-action="reset" data-plan-id="' + item.id + '">放回当前</button>'
+        ? [
+            '<button data-plan-action="reset" data-plan-id="' + item.id + '">放回当前</button>',
+            '<button class="danger" data-plan-action="delete" data-plan-id="' + item.id + '">删除</button>'
+          ].join('')
         : [
             '<button data-plan-action="done" data-plan-id="' + item.id + '">完成</button>',
             '<button data-plan-action="doing" data-plan-id="' + item.id + '">进行中</button>',
             '<button data-plan-action="missed" data-plan-id="' + item.id + '">未完成</button>',
-            '<button data-plan-action="reset" data-plan-id="' + item.id + '">重置</button>'
+            '<button data-plan-action="reset" data-plan-id="' + item.id + '">重置</button>',
+            '<button class="danger" data-plan-action="delete" data-plan-id="' + item.id + '">删除</button>'
           ].join('');
       return [
         '<article class="card plan-card ' + item.status + '">',
@@ -3480,6 +3489,14 @@
     function updatePlanItem(id, status) {
       const item = (state.planItems || []).find(function (plan) { return plan.id === id; });
       if (!item) return;
+      if (status === 'delete') {
+        const confirmed = window.confirm('确定删除这个计划吗？');
+        if (!confirmed) return;
+        state.planItems = (state.planItems || []).filter(function (plan) { return plan.id !== id; });
+        savePlanItems();
+        renderPlan();
+        return;
+      }
       if (status === 'missed') {
         const reason = window.prompt('这次为什么没完成？写短一点就行。', item.reason || '');
         if (reason === null) return;
