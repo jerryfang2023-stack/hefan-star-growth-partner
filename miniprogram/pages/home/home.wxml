@@ -8,7 +8,7 @@
   </view>
 
   <view class="home-hero">
-    <view class="hero-kicker">Star 的学习闯关地图</view>
+    <view class="hero-kicker">Star 的闯关地图</view>
     <image class="quest-map" src="/assets/quest-map.jpg" mode="aspectFill" />
     <view class="mission-dock">
       <image class="mission-art" src="{{selectedMission.image}}" mode="aspectFill" />
