@@ -6,7 +6,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>星途伙伴 MVP</title>
+  <title>Star 小宇宙 MVP</title>
   <style>
     :root {
       --ink: #24213a;
@@ -1631,7 +1631,7 @@
 
     <header class="app-header">
       <div class="app-title-row">
-        <h1 class="app-title">星途伙伴</h1>
+        <h1 class="app-title">Star 小宇宙</h1>
         <span class="pill">Hermes ${hermesMode}</span>
       </div>
     </header>
