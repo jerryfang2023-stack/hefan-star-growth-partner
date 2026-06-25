@@ -61,6 +61,13 @@
   margin-bottom: 18rpx;
 }
 
+.plan-section-title {
+  margin: 0 0 16rpx;
+  color: #24213a;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
 .plan-card.done {
   border-color: #bde6ce;
   background: linear-gradient(135deg, #f5fff8, #ffffff);

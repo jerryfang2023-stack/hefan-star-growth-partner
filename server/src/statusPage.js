@@ -1091,6 +1091,17 @@
       font-size: 12px;
     }
 
+    .plan-section-note {
+      margin: 14px 0 10px;
+      color: #24213a;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .plan-history-title {
+      margin-top: 18px;
+    }
+
     .card {
       padding: 15px;
       border: 1px solid var(--line);
@@ -1824,7 +1835,7 @@
       <section id="plan" class="view">
         <div class="section-head">
           <span class="section-title">计划中心</span>
-          <button id="regen-plan" class="secondary">补一组计划</button>
+          <button id="regen-plan" class="secondary">生成今日建议</button>
         </div>
         <div id="plan-dashboard"></div>
         <div id="plan-form"></div>
@@ -1965,25 +1976,13 @@
         status: 'todo',
         reason: '',
         steps: ['热身 2 分钟', '低重心移动 6 组', '记一个今天最稳的动作']
-      },
-      {
-        id: 'music-rhythm-practice',
-        type: 'music',
-        title: '节奏 8 拍练习',
-        minutes: 10,
-        status: 'doing',
-        reason: '',
-        steps: ['拍手数 8 拍', '跟一段节奏', '录 10 秒听一遍']
-      },
-      {
-        id: 'habit-bedtime-bag',
-        type: 'habit',
-        title: '睡前整理书包',
-        minutes: 6,
-        status: 'missed',
-        reason: '昨天太晚开始，今天提前到洗漱前。',
-        steps: ['看明天课程', '放好作业本', '水杯和钥匙放固定位置']
       }
+    ];
+    const REMOVED_DEMO_PLAN_IDS = [
+      'learning-api-1',
+      'learning-api-2',
+      'music-rhythm-practice',
+      'habit-bedtime-bag'
     ];
 
     const playCards = {
@@ -3311,7 +3310,7 @@
     }
 
     function planItemsFromApi(apiPlan) {
-      const learning = (apiPlan || []).map(function (item, index) {
+      const learning = (apiPlan || []).slice(0, 1).map(function (item, index) {
         return normalizePlanItem({
           id: 'learning-api-' + index,
           type: 'learning',
@@ -3324,12 +3323,18 @@
       return learning.concat(EXTRA_PLAN_ITEMS.map(normalizePlanItem));
     }
 
+    function pruneDemoPlanItems(items) {
+      return items.filter(function (item) {
+        return !REMOVED_DEMO_PLAN_IDS.includes(item.id) || item.status === 'done' || item.status === 'missed';
+      });
+    }
+
     function loadPlanItems(apiPlan) {
       try {
         const raw = localStorage.getItem(PLAN_KEY);
         if (raw) {
           const saved = JSON.parse(raw);
-          if (Array.isArray(saved) && saved.length) return saved.map(normalizePlanItem);
+          if (Array.isArray(saved) && saved.length) return pruneDemoPlanItems(saved.map(normalizePlanItem));
         }
       } catch (error) {
         // Fall back to the generated MVP seed.
@@ -3339,6 +3344,7 @@
 
     function savePlanItems() {
       try {
+        state.planItems = pruneDemoPlanItems(state.planItems || []);
         localStorage.setItem(PLAN_KEY, JSON.stringify(state.planItems || []));
       } catch (error) {
         // Plan center still works for this session.
@@ -3367,6 +3373,18 @@
         missed: missed,
         rate: total ? Math.round((done / total) * 100) : 0
       };
+    }
+
+    function currentPlanItems() {
+      return (state.planItems || []).filter(function (item) {
+        return item.status !== 'done' && item.status !== 'missed';
+      });
+    }
+
+    function historicalPlanItems() {
+      return (state.planItems || []).filter(function (item) {
+        return item.status === 'done' || item.status === 'missed';
+      });
     }
 
     function renderPlanDashboard() {
@@ -3399,28 +3417,44 @@
       ].join('');
     }
 
-    function renderPlan() {
-      renderPlanDashboard();
-      renderPlanForm();
-      el('plan-list').innerHTML = (state.planItems || [])
-        .map(function (item) {
-          const type = planTypeByKey(item.type);
-          return [
-            '<article class="card plan-card ' + item.status + '">',
-            '<div class="plan-topline"><span class="plan-type">' + type.mark + ' ' + type.label + '</span><span class="plan-state">' + item.minutes + ' 分钟 · ' + planStatusLabel(item.status) + '</span></div>',
-            '<h3>' + escapeHtml(item.title) + '</h3>',
-            '<ol class="steps">' + item.steps.map(function (step) { return '<li>' + escapeHtml(step) + '</li>'; }).join('') + '</ol>',
-            item.status === 'missed' && item.reason ? '<div class="plan-reason">未完成原因：' + escapeHtml(item.reason) + '</div>' : '',
-            '<div class="plan-actions">',
+    function renderPlanCard(item) {
+      const type = planTypeByKey(item.type);
+      const actionButtons = item.status === 'done' || item.status === 'missed'
+        ? '<button data-plan-action="reset" data-plan-id="' + item.id + '">放回当前</button>'
+        : [
             '<button data-plan-action="done" data-plan-id="' + item.id + '">完成</button>',
             '<button data-plan-action="doing" data-plan-id="' + item.id + '">进行中</button>',
             '<button data-plan-action="missed" data-plan-id="' + item.id + '">未完成</button>',
-            '<button data-plan-action="reset" data-plan-id="' + item.id + '">重置</button>',
-            '</div>',
-            '</article>'
+            '<button data-plan-action="reset" data-plan-id="' + item.id + '">重置</button>'
           ].join('');
-        })
-        .join('');
+      return [
+        '<article class="card plan-card ' + item.status + '">',
+        '<div class="plan-topline"><span class="plan-type">' + type.mark + ' ' + type.label + '</span><span class="plan-state">' + item.minutes + ' 分钟 · ' + planStatusLabel(item.status) + '</span></div>',
+        '<h3>' + escapeHtml(item.title) + '</h3>',
+        '<ol class="steps">' + item.steps.map(function (step) { return '<li>' + escapeHtml(step) + '</li>'; }).join('') + '</ol>',
+        item.status === 'missed' && item.reason ? '<div class="plan-reason">未完成原因：' + escapeHtml(item.reason) + '</div>' : '',
+        '<div class="plan-actions">',
+        actionButtons,
+        '</div>',
+        '</article>'
+      ].join('');
+    }
+
+    function renderPlan() {
+      renderPlanDashboard();
+      renderPlanForm();
+      const currentItems = currentPlanItems();
+      const historyItems = historicalPlanItems();
+      el('plan-list').innerHTML = [
+        '<div class="plan-section-note">当前计划</div>',
+        currentItems.length
+          ? currentItems.map(renderPlanCard).join('')
+          : '<article class="card muted">当前没有待执行计划，可以新增一个。</article>',
+        '<div class="plan-section-note plan-history-title">历史计划</div>',
+        historyItems.length
+          ? historyItems.slice(0, 6).map(renderPlanCard).join('')
+          : '<article class="card muted">完成或未完成的计划会在这里出现。</article>'
+      ].join('');
     }
 
     function addPlanItem() {
@@ -3525,7 +3559,12 @@
         body: { goal: '稳住六年级数学和语文薄弱点' }
       });
       state.plan = result.plan;
-      state.planItems = planItemsFromApi(result.plan).concat(state.planItems || []);
+      const generatedItems = planItemsFromApi(result.plan);
+      const generatedIds = generatedItems.map(function (item) { return item.id; });
+      const retainedItems = (state.planItems || []).filter(function (item) {
+        return !generatedIds.includes(item.id) || item.status === 'done' || item.status === 'missed';
+      });
+      state.planItems = generatedItems.concat(retainedItems);
       savePlanItems();
       renderPlan();
     }

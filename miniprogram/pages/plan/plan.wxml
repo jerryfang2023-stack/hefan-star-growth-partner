@@ -1,6 +1,6 @@
 <view class="page">
   <view class="title">计划中心</view>
-  <view class="subtitle">学习、运动、音乐和小习惯，都放在这里管理。</view>
+  <view class="subtitle">把今天要做的事放在这里，完成后会进历史计划。</view>
 
   <view class="plan-dashboard">
     <view class="plan-stat">
@@ -37,11 +37,12 @@
   </view>
 
   <view class="section">
-    <button class="secondary-button" loading="{{loading}}" bindtap="regeneratePlan">补一组计划</button>
+    <button class="secondary-button" loading="{{loading}}" bindtap="regeneratePlan">生成今日建议</button>
   </view>
 
   <view class="section">
-    <view wx:for="{{planItems}}" wx:key="id" class="{{item.cardClass}}">
+    <view class="plan-section-title">当前计划</view>
+    <view wx:for="{{currentPlanItems}}" wx:key="id" class="{{item.cardClass}}">
       <view class="plan-topline">
         <view class="plan-type">{{item.typeMark}} {{item.typeLabel}}</view>
         <view class="plan-state">{{item.minutes}} 分钟 · {{item.statusText}}</view>
@@ -56,5 +57,23 @@
         <button data-id="{{item.id}}" data-status="reset" bindtap="setPlanStatus">重置</button>
       </view>
     </view>
+    <view wx:if="{{!currentPlanItems.length}}" class="card muted">当前没有待执行计划，可以新增一个。</view>
+  </view>
+
+  <view class="section">
+    <view class="plan-section-title">历史计划</view>
+    <view wx:for="{{historyPlanItems}}" wx:key="id" class="{{item.cardClass}}">
+      <view class="plan-topline">
+        <view class="plan-type">{{item.typeMark}} {{item.typeLabel}}</view>
+        <view class="plan-state">{{item.minutes}} 分钟 · {{item.statusText}}</view>
+      </view>
+      <view class="plan-title">{{item.title}}</view>
+      <view class="step" wx:for="{{item.steps}}" wx:key="*this">{{index + 1}}. {{item}}</view>
+      <view class="plan-reason" wx:if="{{item.showReason}}">未完成原因：{{item.reason}}</view>
+      <view class="plan-actions">
+        <button data-id="{{item.id}}" data-status="reset" bindtap="setPlanStatus">放回当前</button>
+      </view>
+    </view>
+    <view wx:if="{{!historyPlanItems.length}}" class="card muted">完成或未完成的计划会在这里出现。</view>
   </view>
 </view>

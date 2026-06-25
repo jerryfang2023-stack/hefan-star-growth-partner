@@ -18,24 +18,13 @@ const EXTRA_PLAN_ITEMS = [
     reason: '',
     steps: ['热身 2 分钟', '低重心移动 6 组', '记一个今天最稳的动作'],
   },
-  {
-    id: 'music-rhythm-practice',
-    type: 'music',
-    title: '节奏 8 拍练习',
-    minutes: 10,
-    status: 'doing',
-    reason: '',
-    steps: ['拍手数 8 拍', '跟一段节奏', '录 10 秒听一遍'],
-  },
-  {
-    id: 'habit-bedtime-bag',
-    type: 'habit',
-    title: '睡前整理书包',
-    minutes: 6,
-    status: 'missed',
-    reason: '昨天太晚开始，今天提前到洗漱前。',
-    steps: ['看明天课程', '放好作业本', '水杯和钥匙放固定位置'],
-  },
+];
+
+const REMOVED_DEMO_PLAN_IDS = [
+  'learning-api-1',
+  'learning-api-2',
+  'music-rhythm-practice',
+  'habit-bedtime-bag',
 ];
 
 function planTypeByKey(key) {
@@ -67,7 +56,7 @@ function normalizePlanItem(item, index) {
 }
 
 function planItemsFromApi(apiPlan) {
-  const learning = (apiPlan || []).map((item, index) => normalizePlanItem({
+  const learning = (apiPlan || []).slice(0, 1).map((item, index) => normalizePlanItem({
     id: `learning-api-${index}`,
     type: 'learning',
     title: item.title,
@@ -78,14 +67,20 @@ function planItemsFromApi(apiPlan) {
   return learning.concat(EXTRA_PLAN_ITEMS.map(normalizePlanItem));
 }
 
+function pruneDemoPlanItems(items) {
+  return items.filter((item) => (
+    !REMOVED_DEMO_PLAN_IDS.includes(item.id) || item.status === 'done' || item.status === 'missed'
+  ));
+}
+
 function readPlanItems(apiPlan) {
   const saved = wx.getStorageSync(PLAN_STORAGE_KEY);
-  if (Array.isArray(saved) && saved.length) return saved.map(normalizePlanItem);
+  if (Array.isArray(saved) && saved.length) return pruneDemoPlanItems(saved.map(normalizePlanItem));
   return planItemsFromApi(apiPlan);
 }
 
 function writePlanItems(items) {
-  wx.setStorageSync(PLAN_STORAGE_KEY, items);
+  wx.setStorageSync(PLAN_STORAGE_KEY, pruneDemoPlanItems(items));
 }
 
 function decoratePlanItems(items) {
@@ -121,10 +116,18 @@ function planStats(items) {
   };
 }
 
+function splitPlanItems(items) {
+  return {
+    current: items.filter((item) => item.status !== 'done' && item.status !== 'missed'),
+    history: items.filter((item) => item.status === 'done' || item.status === 'missed'),
+  };
+}
+
 Page({
   data: {
     loading: false,
-    planItems: [],
+    currentPlanItems: [],
+    historyPlanItems: [],
     stats: planStats([]),
     planTypes: PLAN_TYPES,
     newPlan: {
@@ -140,10 +143,12 @@ Page({
   },
 
   setPlans(items) {
-    const normalized = items.map(normalizePlanItem);
+    const normalized = pruneDemoPlanItems(items.map(normalizePlanItem));
+    const groups = splitPlanItems(normalized);
     writePlanItems(normalized);
     this.setData({
-      planItems: decoratePlanItems(normalized),
+      currentPlanItems: decoratePlanItems(groups.current),
+      historyPlanItems: decoratePlanItems(groups.history),
       stats: planStats(normalized),
     });
   },
@@ -151,11 +156,7 @@ Page({
   async loadPlan() {
     try {
       const result = await request('/api/plan');
-      const items = readPlanItems(result.plan);
-      this.setData({
-        planItems: decoratePlanItems(items),
-        stats: planStats(items),
-      });
+      this.setPlans(readPlanItems(result.plan));
     } catch (error) {
       wx.showToast({ title: error.message, icon: 'none' });
     }
@@ -166,11 +167,17 @@ Page({
     try {
       const result = await request('/api/plan', {
         method: 'POST',
-        data: { goal: '稳住学习，也留一点运动和音乐时间。' },
+        data: { goal: '给 Star 生成今天最值得做的一组计划' },
       });
+      const generatedItems = planItemsFromApi(result.plan);
+      const generatedIds = generatedItems.map((item) => item.id);
       const current = wx.getStorageSync(PLAN_STORAGE_KEY);
-      this.setPlans(planItemsFromApi(result.plan).concat(Array.isArray(current) ? current : []));
-      wx.showToast({ title: '已补计划', icon: 'success' });
+      const existingItems = Array.isArray(current) ? current : [];
+      const retainedItems = existingItems.filter((item) => (
+        !generatedIds.includes(item.id) || item.status === 'done' || item.status === 'missed'
+      ));
+      this.setPlans(generatedItems.concat(retainedItems));
+      wx.showToast({ title: '已生成今日建议', icon: 'success' });
     } catch (error) {
       wx.showToast({ title: error.message, icon: 'none' });
     } finally {
