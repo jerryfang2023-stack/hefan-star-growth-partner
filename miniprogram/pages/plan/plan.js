@@ -1,19 +1,161 @@
 const { request } = require('../../utils/api');
 
+const PLAN_STORAGE_KEY = 'hefanStarPlanCenterV1';
+const PLAN_TYPES = [
+  { key: 'learning', label: '学习', mark: '学' },
+  { key: 'sport', label: '运动', mark: '动' },
+  { key: 'music', label: '音乐', mark: '乐' },
+  { key: 'habit', label: '习惯', mark: '习' },
+];
+
+const EXTRA_PLAN_ITEMS = [
+  {
+    id: 'sport-basketball-footwork',
+    type: 'sport',
+    title: '篮球脚步 12 分钟',
+    minutes: 12,
+    status: 'todo',
+    reason: '',
+    steps: ['热身 2 分钟', '低重心移动 6 组', '记一个今天最稳的动作'],
+  },
+  {
+    id: 'music-rhythm-practice',
+    type: 'music',
+    title: '节奏 8 拍练习',
+    minutes: 10,
+    status: 'doing',
+    reason: '',
+    steps: ['拍手数 8 拍', '跟一段节奏', '录 10 秒听一遍'],
+  },
+  {
+    id: 'habit-bedtime-bag',
+    type: 'habit',
+    title: '睡前整理书包',
+    minutes: 6,
+    status: 'missed',
+    reason: '昨天太晚开始，今天提前到洗漱前。',
+    steps: ['看明天课程', '放好作业本', '水杯和钥匙放固定位置'],
+  },
+];
+
+function planTypeByKey(key) {
+  return PLAN_TYPES.find((type) => type.key === key) || PLAN_TYPES[0];
+}
+
+function defaultPlanSteps(type) {
+  if (type === 'sport') return ['热身一下', '练一组动作', '记一个动作感觉'];
+  if (type === 'music') return ['慢速来一遍', '卡住处单独练', '录一小段回听'];
+  if (type === 'habit') return ['先准备', '做完打勾', '给明天少留一点麻烦'];
+  return ['先看目标', '做 15 分钟', '写下一个卡点'];
+}
+
+function normalizePlanStatus(value) {
+  return ['todo', 'doing', 'done', 'missed'].includes(value) ? value : 'todo';
+}
+
+function normalizePlanItem(item, index) {
+  const type = item.type || (item.subject === '运动' ? 'sport' : 'learning');
+  return {
+    id: item.id || `plan-${Date.now()}-${index}`,
+    type: planTypeByKey(type).key,
+    title: item.title || '小计划',
+    minutes: Math.max(1, Number(item.minutes) || 15),
+    status: normalizePlanStatus(item.statusKey || item.status),
+    reason: item.reason || '',
+    steps: Array.isArray(item.steps) && item.steps.length ? item.steps : defaultPlanSteps(type),
+  };
+}
+
+function planItemsFromApi(apiPlan) {
+  const learning = (apiPlan || []).map((item, index) => normalizePlanItem({
+    id: `learning-api-${index}`,
+    type: 'learning',
+    title: item.title,
+    minutes: item.minutes,
+    status: index === 0 ? 'doing' : 'todo',
+    steps: item.steps,
+  }, index));
+  return learning.concat(EXTRA_PLAN_ITEMS.map(normalizePlanItem));
+}
+
+function readPlanItems(apiPlan) {
+  const saved = wx.getStorageSync(PLAN_STORAGE_KEY);
+  if (Array.isArray(saved) && saved.length) return saved.map(normalizePlanItem);
+  return planItemsFromApi(apiPlan);
+}
+
+function writePlanItems(items) {
+  wx.setStorageSync(PLAN_STORAGE_KEY, items);
+}
+
+function decoratePlanItems(items) {
+  return items.map((item) => {
+    const type = planTypeByKey(item.type);
+    return {
+      ...item,
+      typeLabel: type.label,
+      typeMark: type.mark,
+      statusText: {
+        todo: '未开始',
+        doing: '进行中',
+        done: '已完成',
+        missed: '未完成',
+      }[item.status] || '未开始',
+      cardClass: `card plan-card ${item.status}`,
+      showReason: item.status === 'missed' && Boolean(item.reason),
+    };
+  });
+}
+
+function planStats(items) {
+  const total = items.length;
+  const done = items.filter((item) => item.status === 'done').length;
+  const doing = items.filter((item) => item.status === 'doing').length;
+  const missed = items.filter((item) => item.status === 'missed').length;
+  return {
+    total,
+    done,
+    doing,
+    missed,
+    rate: total ? Math.round((done / total) * 100) : 0,
+  };
+}
+
 Page({
   data: {
     loading: false,
-    plan: [],
+    planItems: [],
+    stats: planStats([]),
+    planTypes: PLAN_TYPES,
+    newPlan: {
+      title: '',
+      typeIndex: 0,
+      typeLabel: PLAN_TYPES[0].label,
+      minutes: 15,
+    },
   },
 
   onShow() {
     this.loadPlan();
   },
 
+  setPlans(items) {
+    const normalized = items.map(normalizePlanItem);
+    writePlanItems(normalized);
+    this.setData({
+      planItems: decoratePlanItems(normalized),
+      stats: planStats(normalized),
+    });
+  },
+
   async loadPlan() {
     try {
       const result = await request('/api/plan');
-      this.setData({ plan: result.plan });
+      const items = readPlanItems(result.plan);
+      this.setData({
+        planItems: decoratePlanItems(items),
+        stats: planStats(items),
+      });
     } catch (error) {
       wx.showToast({ title: error.message, icon: 'none' });
     }
@@ -24,14 +166,71 @@ Page({
     try {
       const result = await request('/api/plan', {
         method: 'POST',
-        data: { goal: '稳住六年级数学和语文薄弱点' },
+        data: { goal: '稳住学习，也留一点运动和音乐时间。' },
       });
-      this.setData({ plan: result.plan });
-      wx.showToast({ title: '计划已更新', icon: 'success' });
+      const current = wx.getStorageSync(PLAN_STORAGE_KEY);
+      this.setPlans(planItemsFromApi(result.plan).concat(Array.isArray(current) ? current : []));
+      wx.showToast({ title: '已补计划', icon: 'success' });
     } catch (error) {
       wx.showToast({ title: error.message, icon: 'none' });
     } finally {
       this.setData({ loading: false });
     }
+  },
+
+  onNewTitleInput(event) {
+    this.setData({ 'newPlan.title': event.detail.value });
+  },
+
+  onNewTypeChange(event) {
+    const typeIndex = Number(event.detail.value) || 0;
+    this.setData({
+      'newPlan.typeIndex': typeIndex,
+      'newPlan.typeLabel': (PLAN_TYPES[typeIndex] || PLAN_TYPES[0]).label,
+    });
+  },
+
+  onNewMinutesInput(event) {
+    this.setData({ 'newPlan.minutes': Number(event.detail.value) || 15 });
+  },
+
+  addPlan() {
+    const title = this.data.newPlan.title.trim();
+    if (!title) {
+      wx.showToast({ title: '先写计划名字', icon: 'none' });
+      return;
+    }
+    const type = PLAN_TYPES[this.data.newPlan.typeIndex] || PLAN_TYPES[0];
+    const current = wx.getStorageSync(PLAN_STORAGE_KEY);
+    const items = Array.isArray(current) ? current : [];
+    items.unshift(normalizePlanItem({
+      id: `custom-${Date.now()}`,
+      type: type.key,
+      title,
+      minutes: this.data.newPlan.minutes,
+      status: 'todo',
+      steps: defaultPlanSteps(type.key),
+    }, 0));
+    this.setPlans(items);
+    this.setData({ 'newPlan.title': '' });
+  },
+
+  setPlanStatus(event) {
+    const { id, status } = event.currentTarget.dataset;
+    const current = wx.getStorageSync(PLAN_STORAGE_KEY);
+    const items = Array.isArray(current) ? current : [];
+    const item = items.find((plan) => plan.id === id);
+    if (!item) return;
+    if (status === 'reset') {
+      item.status = 'todo';
+      item.reason = '';
+    } else if (status === 'missed') {
+      item.status = 'missed';
+      item.reason = item.reason || '这次没有写原因，下次补上。';
+    } else {
+      item.status = status;
+      item.reason = '';
+    }
+    this.setPlans(items);
   },
 });

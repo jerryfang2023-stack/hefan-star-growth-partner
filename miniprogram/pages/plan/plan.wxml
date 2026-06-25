@@ -1,20 +1,60 @@
 <view class="page">
-  <view class="title">15-25 分钟计划</view>
-  <view class="subtitle">把大目标变成每天能完成的小任务。</view>
+  <view class="title">计划中心</view>
+  <view class="subtitle">学习、运动、音乐和小习惯，都放在这里管理。</view>
 
-  <view class="section">
-    <button class="secondary-button" loading="{{loading}}" bindtap="regeneratePlan">重新生成本周计划</button>
+  <view class="plan-dashboard">
+    <view class="plan-stat">
+      <text class="stat-number">{{stats.total}}</text>
+      <text class="stat-label">全部计划</text>
+    </view>
+    <view class="plan-stat">
+      <text class="stat-number">{{stats.done}}</text>
+      <text class="stat-label">已完成</text>
+    </view>
+    <view class="plan-stat">
+      <text class="stat-number">{{stats.doing}}</text>
+      <text class="stat-label">进行中</text>
+    </view>
+    <view class="plan-stat">
+      <text class="stat-number">{{stats.missed}}</text>
+      <text class="stat-label">未完成</text>
+    </view>
+    <view class="plan-stat">
+      <text class="stat-number">{{stats.rate}}%</text>
+      <text class="stat-label">完成率</text>
+    </view>
+  </view>
+
+  <view class="plan-form">
+    <input class="plan-input" placeholder="新计划，比如：低运球 10 分钟" value="{{newPlan.title}}" bindinput="onNewTitleInput" />
+    <view class="form-row">
+      <picker range="{{planTypes}}" range-key="label" value="{{newPlan.typeIndex}}" bindchange="onNewTypeChange">
+        <view class="plan-picker">{{newPlan.typeLabel}}</view>
+      </picker>
+      <input class="plan-input" type="number" value="{{newPlan.minutes}}" bindinput="onNewMinutesInput" />
+    </view>
+    <button class="secondary-button" bindtap="addPlan">加入计划</button>
   </view>
 
   <view class="section">
-    <view wx:for="{{plan}}" wx:key="day" class="card plan-card">
+    <button class="secondary-button" loading="{{loading}}" bindtap="regeneratePlan">补一组计划</button>
+  </view>
+
+  <view class="section">
+    <view wx:for="{{planItems}}" wx:key="id" class="{{item.cardClass}}">
       <view class="plan-topline">
-        <view class="plan-day">{{item.day}}</view>
-        <view class="plan-minutes">{{item.minutes}} 分钟</view>
+        <view class="plan-type">{{item.typeMark}} {{item.typeLabel}}</view>
+        <view class="plan-state">{{item.minutes}} 分钟 · {{item.statusText}}</view>
       </view>
       <view class="plan-title">{{item.title}}</view>
-      <view class="muted">{{item.subject}} · {{item.status}}</view>
       <view class="step" wx:for="{{item.steps}}" wx:key="*this">{{index + 1}}. {{item}}</view>
+      <view class="plan-reason" wx:if="{{item.showReason}}">未完成原因：{{item.reason}}</view>
+      <view class="plan-actions">
+        <button data-id="{{item.id}}" data-status="done" bindtap="setPlanStatus">完成</button>
+        <button data-id="{{item.id}}" data-status="doing" bindtap="setPlanStatus">进行中</button>
+        <button data-id="{{item.id}}" data-status="missed" bindtap="setPlanStatus">未完成</button>
+        <button data-id="{{item.id}}" data-status="reset" bindtap="setPlanStatus">重置</button>
+      </view>
     </view>
   </view>
 </view>

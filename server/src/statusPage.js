@@ -1124,6 +1124,131 @@
       line-height: 1.6;
     }
 
+    .plan-dashboard {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .plan-stat {
+      padding: 10px 7px;
+      border: 1px solid #dedbf4;
+      border-radius: 8px;
+      background: #ffffff;
+      text-align: center;
+    }
+
+    .plan-stat strong {
+      display: block;
+      color: var(--brand);
+      font-size: 18px;
+      line-height: 1.05;
+    }
+
+    .plan-stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .plan-form {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding: 12px;
+      border: 1px solid #dedbf4;
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(236, 235, 255, 0.86), rgba(255, 255, 255, 0.98));
+    }
+
+    .plan-form-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 8px;
+    }
+
+    .plan-input,
+    .plan-select {
+      width: 100%;
+      min-height: 36px;
+      padding: 0 10px;
+      border: 1px solid #dcd8fb;
+      border-radius: 8px;
+      color: var(--ink);
+      background: #ffffff;
+      font-size: 13px;
+    }
+
+    .plan-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .plan-card.done {
+      border-color: #bde6ce;
+      background: linear-gradient(135deg, #f5fff8, #ffffff);
+    }
+
+    .plan-card.missed {
+      border-color: #efd3bb;
+      background: linear-gradient(135deg, #fff8ef, #ffffff);
+    }
+
+    .plan-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 7px;
+    }
+
+    .plan-type {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 8px;
+      border-radius: 999px;
+      color: #4735a9;
+      background: #efedff;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .plan-state {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 850;
+    }
+
+    .plan-reason {
+      margin-top: 8px;
+      padding: 8px;
+      border-radius: 8px;
+      color: #735126;
+      background: #fff5e8;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .plan-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 11px;
+    }
+
+    .plan-actions button {
+      min-height: 30px;
+      padding: 0 10px;
+      color: #4a35a3;
+      background: #efedff;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
     .tag {
       display: inline-flex;
       margin: 6px 6px 0 0;
@@ -1698,9 +1823,11 @@
 
       <section id="plan" class="view">
         <div class="section-head">
-          <span class="section-title">学习计划</span>
-          <button id="regen-plan" class="secondary">重新生成</button>
+          <span class="section-title">计划中心</span>
+          <button id="regen-plan" class="secondary">补一组计划</button>
         </div>
+        <div id="plan-dashboard"></div>
+        <div id="plan-form"></div>
         <div id="plan-list"></div>
       </section>
 
@@ -1800,6 +1927,7 @@
     const state = {
       profile: null,
       plan: [],
+      planItems: [],
       achievements: null,
       selectedMission: {
         kind: 'word',
@@ -1819,6 +1947,44 @@
         }
       ]
     };
+
+    const PLAN_KEY = 'hefan-star-plan-center-v1';
+    const PLAN_TYPES = [
+      { key: 'learning', label: '学习', mark: '学' },
+      { key: 'sport', label: '运动', mark: '动' },
+      { key: 'music', label: '音乐', mark: '乐' },
+      { key: 'habit', label: '习惯', mark: '习' }
+    ];
+
+    const EXTRA_PLAN_ITEMS = [
+      {
+        id: 'sport-basketball-footwork',
+        type: 'sport',
+        title: '篮球脚步 12 分钟',
+        minutes: 12,
+        status: 'todo',
+        reason: '',
+        steps: ['热身 2 分钟', '低重心移动 6 组', '记一个今天最稳的动作']
+      },
+      {
+        id: 'music-rhythm-practice',
+        type: 'music',
+        title: '节奏 8 拍练习',
+        minutes: 10,
+        status: 'doing',
+        reason: '',
+        steps: ['拍手数 8 拍', '跟一段节奏', '录 10 秒听一遍']
+      },
+      {
+        id: 'habit-bedtime-bag',
+        type: 'habit',
+        title: '睡前整理书包',
+        minutes: 6,
+        status: 'missed',
+        reason: '昨天太晚开始，今天提前到洗漱前。',
+        steps: ['看明天课程', '放好作业本', '水杯和钥匙放固定位置']
+      }
+    ];
 
     const playCards = {
       word: {
@@ -3116,12 +3282,193 @@
       renderHomePlayground();
     }
 
+    function planTypeByKey(key) {
+      return PLAN_TYPES.find(function (type) { return type.key === key; }) || PLAN_TYPES[0];
+    }
+
+    function defaultPlanSteps(type) {
+      if (type === 'sport') return ['热身一下', '练一组动作', '记一个动作感觉'];
+      if (type === 'music') return ['慢速来一遍', '卡住处单独练', '录一小段回听'];
+      if (type === 'habit') return ['先准备', '做完打勾', '给明天少留一点麻烦'];
+      return ['先看目标', '做 15 分钟', '写下一个卡点'];
+    }
+
+    function normalizePlanStatus(value) {
+      return ['todo', 'doing', 'done', 'missed'].includes(value) ? value : 'todo';
+    }
+
+    function normalizePlanItem(item, index) {
+      const type = item.type || (item.subject === '运动' ? 'sport' : 'learning');
+      return {
+        id: item.id || ('plan-' + Date.now() + '-' + index),
+        type: planTypeByKey(type).key,
+        title: item.title || '小计划',
+        minutes: Math.max(1, Number(item.minutes) || 15),
+        status: normalizePlanStatus(item.statusKey || item.status),
+        reason: item.reason || '',
+        steps: Array.isArray(item.steps) && item.steps.length ? item.steps : defaultPlanSteps(type)
+      };
+    }
+
+    function planItemsFromApi(apiPlan) {
+      const learning = (apiPlan || []).map(function (item, index) {
+        return normalizePlanItem({
+          id: 'learning-api-' + index,
+          type: 'learning',
+          title: item.title,
+          minutes: item.minutes,
+          status: index === 0 ? 'doing' : 'todo',
+          steps: item.steps
+        }, index);
+      });
+      return learning.concat(EXTRA_PLAN_ITEMS.map(normalizePlanItem));
+    }
+
+    function loadPlanItems(apiPlan) {
+      try {
+        const raw = localStorage.getItem(PLAN_KEY);
+        if (raw) {
+          const saved = JSON.parse(raw);
+          if (Array.isArray(saved) && saved.length) return saved.map(normalizePlanItem);
+        }
+      } catch (error) {
+        // Fall back to the generated MVP seed.
+      }
+      return planItemsFromApi(apiPlan);
+    }
+
+    function savePlanItems() {
+      try {
+        localStorage.setItem(PLAN_KEY, JSON.stringify(state.planItems || []));
+      } catch (error) {
+        // Plan center still works for this session.
+      }
+    }
+
+    function planStatusLabel(status) {
+      return {
+        todo: '未开始',
+        doing: '进行中',
+        done: '已完成',
+        missed: '未完成'
+      }[status] || '未开始';
+    }
+
+    function planStats() {
+      const items = state.planItems || [];
+      const total = items.length;
+      const done = items.filter(function (item) { return item.status === 'done'; }).length;
+      const doing = items.filter(function (item) { return item.status === 'doing'; }).length;
+      const missed = items.filter(function (item) { return item.status === 'missed'; }).length;
+      return {
+        total: total,
+        done: done,
+        doing: doing,
+        missed: missed,
+        rate: total ? Math.round((done / total) * 100) : 0
+      };
+    }
+
+    function renderPlanDashboard() {
+      const stats = planStats();
+      el('plan-dashboard').innerHTML = [
+        '<div class="plan-dashboard">',
+        '<div class="plan-stat"><strong>' + stats.total + '</strong><span>全部计划</span></div>',
+        '<div class="plan-stat"><strong>' + stats.done + '</strong><span>已完成</span></div>',
+        '<div class="plan-stat"><strong>' + stats.doing + '</strong><span>进行中</span></div>',
+        '<div class="plan-stat"><strong>' + stats.missed + '</strong><span>未完成</span></div>',
+        '<div class="plan-stat"><strong>' + stats.rate + '%</strong><span>完成率</span></div>',
+        '</div>'
+      ].join('');
+    }
+
+    function renderPlanForm() {
+      el('plan-form').innerHTML = [
+        '<div class="plan-form">',
+        '<input id="new-plan-title" class="plan-input" placeholder="新计划，比如：低运球 10 分钟" />',
+        '<div class="plan-form-row">',
+        '<select id="new-plan-type" class="plan-select">',
+        PLAN_TYPES.map(function (type) {
+          return '<option value="' + type.key + '">' + type.label + '</option>';
+        }).join(''),
+        '</select>',
+        '<input id="new-plan-minutes" class="plan-input" type="number" min="3" max="60" value="15" />',
+        '</div>',
+        '<button class="secondary" data-plan-action="add">加入计划</button>',
+        '</div>'
+      ].join('');
+    }
+
     function renderPlan() {
-      el('plan-list').innerHTML = state.plan
+      renderPlanDashboard();
+      renderPlanForm();
+      el('plan-list').innerHTML = (state.planItems || [])
         .map(function (item) {
-          return '<article class="card plan-card"><h3>' + item.day + ' · ' + item.title + '</h3><div class="muted">' + item.subject + ' · ' + item.minutes + ' 分钟 · ' + item.status + '</div><ol class="steps">' + item.steps.map(function (step) { return '<li>' + step + '</li>'; }).join('') + '</ol></article>';
+          const type = planTypeByKey(item.type);
+          return [
+            '<article class="card plan-card ' + item.status + '">',
+            '<div class="plan-topline"><span class="plan-type">' + type.mark + ' ' + type.label + '</span><span class="plan-state">' + item.minutes + ' 分钟 · ' + planStatusLabel(item.status) + '</span></div>',
+            '<h3>' + escapeHtml(item.title) + '</h3>',
+            '<ol class="steps">' + item.steps.map(function (step) { return '<li>' + escapeHtml(step) + '</li>'; }).join('') + '</ol>',
+            item.status === 'missed' && item.reason ? '<div class="plan-reason">未完成原因：' + escapeHtml(item.reason) + '</div>' : '',
+            '<div class="plan-actions">',
+            '<button data-plan-action="done" data-plan-id="' + item.id + '">完成</button>',
+            '<button data-plan-action="doing" data-plan-id="' + item.id + '">进行中</button>',
+            '<button data-plan-action="missed" data-plan-id="' + item.id + '">未完成</button>',
+            '<button data-plan-action="reset" data-plan-id="' + item.id + '">重置</button>',
+            '</div>',
+            '</article>'
+          ].join('');
         })
         .join('');
+    }
+
+    function addPlanItem() {
+      const title = el('new-plan-title').value.trim();
+      const type = el('new-plan-type').value;
+      const minutes = Number.parseInt(el('new-plan-minutes').value || '15', 10);
+      if (!title) {
+        alert('先写一个计划名字。');
+        return;
+      }
+      state.planItems.unshift(normalizePlanItem({
+        id: 'custom-' + Date.now(),
+        type: type,
+        title: title,
+        minutes: minutes,
+        status: 'todo',
+        steps: defaultPlanSteps(type)
+      }, 0));
+      savePlanItems();
+      renderPlan();
+    }
+
+    function updatePlanItem(id, status) {
+      const item = (state.planItems || []).find(function (plan) { return plan.id === id; });
+      if (!item) return;
+      if (status === 'missed') {
+        const reason = window.prompt('这次为什么没完成？写短一点就行。', item.reason || '');
+        if (reason === null) return;
+        item.reason = reason.trim() || '暂时没写原因。';
+      }
+      if (status === 'reset') {
+        item.status = 'todo';
+        item.reason = '';
+      } else {
+        item.status = status;
+        if (status !== 'missed') item.reason = '';
+      }
+      savePlanItems();
+      renderPlan();
+    }
+
+    function handlePlanAction(target) {
+      const action = target.dataset.planAction;
+      if (action === 'add') {
+        addPlanItem();
+        return;
+      }
+      updatePlanItem(target.dataset.planId, action);
     }
 
     function renderProfile() {
@@ -3140,6 +3487,7 @@
       const planResult = await api('/api/plan');
       state.profile = profileResult.profile;
       state.plan = planResult.plan;
+      state.planItems = loadPlanItems(state.plan);
       renderProfile();
       renderPlan();
       renderAchievements();
@@ -3177,6 +3525,8 @@
         body: { goal: '稳住六年级数学和语文薄弱点' }
       });
       state.plan = result.plan;
+      state.planItems = planItemsFromApi(result.plan).concat(state.planItems || []);
+      savePlanItems();
       renderPlan();
     }
 
@@ -3239,6 +3589,11 @@
       const bentoTarget = event.target.closest('[data-bento-action]');
       if (bentoTarget) {
         handleBentoAction(bentoTarget);
+        return;
+      }
+      const planTarget = event.target.closest('[data-plan-action]');
+      if (planTarget) {
+        handlePlanAction(planTarget);
         return;
       }
       const action = event.target.dataset.playAction;
