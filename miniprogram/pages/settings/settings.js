@@ -27,9 +27,9 @@ const BENTO_INGREDIENTS = [
   { key: 'shrimp', name: '虾仁', mark: '虾', price: 70, level: 6, asset: '/assets/food-shrimp.png' },
 ];
 const BENTO_CUSTOMERS = [
-  { key: 'momo', name: '墨墨', request: ['rice', 'cabbage'], note: '今天想要清爽一点。' },
-  { key: 'dada', name: '达达', request: ['rice', 'drumstick'], note: '练完球，想吃有力气的。' },
-  { key: 'nana', name: '娜娜', request: ['rice', 'egg', 'corn'], note: '想要金色盒饭。' },
+  { key: 'momo', name: '墨墨', request: ['rice', 'cabbage'], rewardCoins: 8, note: '今天想要清爽一点。' },
+  { key: 'dada', name: '达达', request: ['rice', 'drumstick'], rewardCoins: 12, note: '练完球，想吃有力气的。' },
+  { key: 'nana', name: '娜娜', request: ['rice', 'egg', 'corn'], rewardCoins: 18, note: '想要金色盒饭。' },
 ];
 const BENTO_BASE_CAPACITY = 2;
 const BENTO_MAX_CAPACITY_LEVEL = 10;
@@ -123,6 +123,7 @@ function todayKey() {
 function emptyBento() {
   return {
     spentPoints: 0,
+    coins: 0,
     capacityLevel: 1,
     unlocked: [],
     lunchbox: [],
@@ -139,6 +140,7 @@ function readBento() {
   const capacityLevel = clampBentoCapacityLevel(saved.capacityLevel);
   return {
     spentPoints: Number(saved.spentPoints) || 0,
+    coins: Math.max(0, Number(saved.coins) || 0),
     capacityLevel,
     unlocked: Array.isArray(saved.unlocked) ? saved.unlocked : [],
     lunchbox: Array.isArray(saved.lunchbox) ? saved.lunchbox.slice(0, bentoCapacity(capacityLevel)) : [],
@@ -184,6 +186,14 @@ function availableBentoPoints(achievements, bento) {
   return Math.max(0, (Number(achievements.totalScore) || 0) - (Number(bento.spentPoints) || 0));
 }
 
+function availableBentoCoins(bento) {
+  return Math.max(0, Number(bento.coins) || 0);
+}
+
+function customerRewardCoins(customer) {
+  return Number(customer.rewardCoins) || customer.request.length * 4;
+}
+
 function canUnlockIngredient(bento, item) {
   if (item.level <= 1) return true;
   const previous = BENTO_INGREDIENTS[item.level - 2];
@@ -193,9 +203,11 @@ function canUnlockIngredient(bento, item) {
 function decorateBento(achievements) {
   const bento = readBento();
   const availablePoints = availableBentoPoints(achievements, bento);
+  const availableCoins = availableBentoCoins(bento);
   const capacityLevel = clampBentoCapacityLevel(bento.capacityLevel);
   const capacity = bentoCapacity(capacityLevel);
   const upgradePrice = bentoUpgradePrice(capacityLevel);
+  const full = bento.lunchbox.length >= capacity;
   const lunchboxSlots = Array.from({ length: capacity }, (_, index) => {
     const item = ingredientByKey(bento.lunchbox[index]);
     return item
@@ -206,11 +218,14 @@ function decorateBento(achievements) {
     const unlocked = bento.unlocked.includes(item.key);
     const canStep = canUnlockIngredient(bento, item);
     const affordable = availablePoints >= item.price;
+    const useDisabled = !unlocked || full || !affordable;
     return {
       ...item,
       unlocked,
-      cardClass: `ingredient-card ${unlocked ? 'unlocked' : 'locked'}`,
+      cardClass: `ingredient-card ${unlocked || (!unlocked && canStep && affordable) ? 'unlocked' : 'locked'}`,
       disabled: unlocked || !canStep || !affordable,
+      useDisabled,
+      useButtonText: full ? '饭盒满了' : (affordable ? `装${item.name} · ${item.price}分` : '积分不足'),
       buttonText: unlocked ? '已解锁' : (!canStep ? '先解锁上一级' : (affordable ? `${item.price} 分解锁` : '积分不足')),
     };
   });
@@ -221,21 +236,27 @@ function decorateBento(achievements) {
       ...customer,
       initial: customer.name.slice(0, 1),
       requestText: requestText(customer.request),
+      rewardCoins: customerRewardCoins(customer),
       served,
       disabled: served || !ready,
+      serveButtonText: served ? '已完成' : (ready ? `包装 +${customerRewardCoins(customer)}金币` : '包装'),
       buttonText: served ? '已完成' : '包装',
     };
   });
   return {
     ...bento,
     availablePoints,
+    availableCoins,
     capacity: {
       level: capacityLevel,
       value: capacity,
       nextValue: bentoCapacity(capacityLevel + 1),
       maxed: capacityLevel >= BENTO_MAX_CAPACITY_LEVEL,
       price: upgradePrice,
-      disabled: capacityLevel >= BENTO_MAX_CAPACITY_LEVEL || availablePoints < upgradePrice,
+      disabled: capacityLevel >= BENTO_MAX_CAPACITY_LEVEL || availableCoins < upgradePrice,
+      upgradeButtonText: capacityLevel >= BENTO_MAX_CAPACITY_LEVEL
+        ? '已满级'
+        : (availableCoins >= upgradePrice ? `${upgradePrice} 金币升级` : '金币不足'),
       buttonText: capacityLevel >= BENTO_MAX_CAPACITY_LEVEL
         ? '已满级'
         : (availablePoints >= upgradePrice ? `${upgradePrice} 分升级` : '积分不足'),
@@ -356,12 +377,16 @@ Page({
   addBentoIngredient(event) {
     const key = event.currentTarget.dataset.key;
     const item = ingredientByKey(key);
+    const achievements = decorateAchievements();
     const bento = readBento();
     if (!item || !bento.unlocked.includes(key)) return;
     const capacity = bentoCapacity(bento.capacityLevel);
     if (bento.lunchbox.length >= capacity) {
       bento.feedback = '盒饭已经满了，升级容量或先包装。';
+    } else if (availableBentoPoints(achievements, bento) < item.price) {
+      bento.feedback = '积分不够装这个食材，先去闯一关赚分。';
     } else {
+      bento.spentPoints += item.price;
       bento.lunchbox.push(key);
       bento.feedback = `${item.name} 装进盒饭了。`;
     }
@@ -383,11 +408,11 @@ Page({
       bento.feedback = '饭盒已经满级，最多 11 格。';
     } else {
       const price = bentoUpgradePrice(level);
-      if (availableBentoPoints(achievements, bento) < price) {
-        bento.feedback = '升级饭盒的积分还不够。';
+      if (availableBentoCoins(bento) < price) {
+        bento.feedback = '升级饭盒的金币还不够，先给顾客包装盒饭。';
       } else {
+        bento.coins = availableBentoCoins(bento) - price;
         bento.capacityLevel = level + 1;
-        bento.spentPoints += price;
         bento.feedback = `饭盒升到 Lv.${bento.capacityLevel}，现在有 ${bentoCapacity(bento.capacityLevel)} 格。`;
       }
     }
@@ -403,9 +428,11 @@ Page({
     if (missing.length) {
       bento.feedback = `${customer.name} 还缺：${requestText(missing)}`;
     } else {
+      const reward = customerRewardCoins(customer);
       bento.servedToday.push(key);
+      bento.coins = availableBentoCoins(bento) + reward;
       bento.lunchbox = [];
-      bento.feedback = `${customer.name} 的盒饭包装好了。下一位顾客来了。`;
+      bento.feedback = `${customer.name} 收到盒饭啦，赚到 ${reward} 金币。`;
     }
     this.refreshBento(bento);
   },

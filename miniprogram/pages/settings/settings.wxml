@@ -30,6 +30,8 @@
       <view class="bento-wallet">
         <text>可用积分</text>
         <text class="wallet-number">{{bento.availablePoints}}</text>
+        <text class="wallet-label">金币</text>
+        <text class="wallet-number">{{bento.availableCoins}}</text>
       </view>
     </view>
 
@@ -44,7 +46,7 @@
           </view>
         </view>
         <button class="bento-buy" disabled="{{bento.capacity.disabled}}" bindtap="upgradeBentoCapacity">
-          {{bento.capacity.buttonText}}
+          {{bento.capacity.upgradeButtonText}}
         </button>
       </view>
       <view class="lunchbox">
@@ -62,9 +64,10 @@
           wx:for="{{bento.unlockedIngredients}}"
           wx:key="key"
           data-key="{{item.key}}"
+          disabled="{{item.useDisabled}}"
           bindtap="addBentoIngredient"
         >
-          装{{item.name}}
+          {{item.useButtonText}}
         </button>
         <button class="bento-action" bindtap="clearBento">清空盒饭</button>
       </view>
@@ -80,7 +83,8 @@
         </view>
         <view>
           <view class="ingredient-name">{{item.name}}</view>
-          <view class="ingredient-meta">等级 {{item.level}} · 价格 {{item.price}} 分</view>
+          <view class="ingredient-meta">等级 {{item.level}} · 解锁 {{item.price}} 分</view>
+          <view class="ingredient-meta">装入每次 {{item.price}} 分</view>
         </view>
         <button class="bento-buy" disabled="{{item.disabled}}" data-key="{{item.key}}" bindtap="buyBentoIngredient">
           {{item.buttonText}}
@@ -97,7 +101,7 @@
           <view class="customer-request">{{item.note}} 要：{{item.requestText}}</view>
         </view>
         <button class="bento-serve" disabled="{{item.disabled}}" data-key="{{item.key}}" bindtap="serveBentoCustomer">
-          {{item.buttonText}}
+          {{item.serveButtonText}}
         </button>
       </view>
     </view>
