@@ -45,6 +45,10 @@
   gap: 14rpx;
 }
 
+.date-row {
+  grid-template-columns: 1fr 1fr 0.78fr;
+}
+
 .plan-input,
 .plan-picker {
   min-height: 72rpx;
@@ -55,6 +59,11 @@
   background: #ffffff;
   font-size: 25rpx;
   line-height: 72rpx;
+}
+
+.date-picker {
+  padding: 0 14rpx;
+  font-size: 22rpx;
 }
 
 .plan-card {
@@ -107,6 +116,14 @@
   font-size: 32rpx;
   font-weight: 900;
   line-height: 1.25;
+}
+
+.plan-schedule {
+  margin-bottom: 8rpx;
+  color: #5b5ce2;
+  font-size: 23rpx;
+  font-weight: 850;
+  line-height: 1.4;
 }
 
 .step {

@@ -42,6 +42,21 @@ function normalizePlanStatus(value) {
   return ['todo', 'doing', 'done', 'missed'].includes(value) ? value : 'todo';
 }
 
+function normalizeDateValue(value) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(String(value || '')) ? String(value) : '';
+}
+
+function normalizeTimeValue(value) {
+  return /^\d{2}:\d{2}$/.test(String(value || '')) ? String(value) : '';
+}
+
+function todayInputDate() {
+  const date = new Date();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
 function normalizePlanItem(item, index) {
   const type = item.type || (item.subject === '运动' ? 'sport' : 'learning');
   return {
@@ -49,6 +64,9 @@ function normalizePlanItem(item, index) {
     type: planTypeByKey(type).key,
     title: item.title || '小计划',
     minutes: Math.max(1, Number(item.minutes) || 15),
+    startDate: normalizeDateValue(item.startDate),
+    endDate: normalizeDateValue(item.endDate),
+    planTime: normalizeTimeValue(item.planTime || item.time),
     status: normalizePlanStatus(item.statusKey || item.status),
     reason: item.reason || '',
     steps: Array.isArray(item.steps) && item.steps.length ? item.steps : defaultPlanSteps(type),
@@ -86,10 +104,14 @@ function writePlanItems(items) {
 function decoratePlanItems(items) {
   return items.map((item) => {
     const type = planTypeByKey(item.type);
+    const dates = item.startDate && item.endDate ? `${item.startDate} 至 ${item.endDate}` : (item.startDate || item.endDate || '');
+    const scheduleText = [dates, item.planTime].filter(Boolean).join(' · ');
     return {
       ...item,
       typeLabel: type.label,
       typeMark: type.mark,
+      scheduleText,
+      showSchedule: Boolean(scheduleText),
       statusText: {
         todo: '未开始',
         doing: '进行中',
@@ -135,6 +157,9 @@ Page({
       typeIndex: 0,
       typeLabel: PLAN_TYPES[0].label,
       minutes: 15,
+      startDate: todayInputDate(),
+      endDate: todayInputDate(),
+      planTime: '19:30',
     },
   },
 
@@ -201,10 +226,26 @@ Page({
     this.setData({ 'newPlan.minutes': Number(event.detail.value) || 15 });
   },
 
+  onNewStartDateChange(event) {
+    this.setData({ 'newPlan.startDate': event.detail.value });
+  },
+
+  onNewEndDateChange(event) {
+    this.setData({ 'newPlan.endDate': event.detail.value });
+  },
+
+  onNewTimeChange(event) {
+    this.setData({ 'newPlan.planTime': event.detail.value });
+  },
+
   addPlan() {
     const title = this.data.newPlan.title.trim();
     if (!title) {
       wx.showToast({ title: '先写计划名字', icon: 'none' });
+      return;
+    }
+    if (this.data.newPlan.startDate && this.data.newPlan.endDate && this.data.newPlan.endDate < this.data.newPlan.startDate) {
+      wx.showToast({ title: '结束日期不能早于开始日期', icon: 'none' });
       return;
     }
     const type = PLAN_TYPES[this.data.newPlan.typeIndex] || PLAN_TYPES[0];
@@ -215,6 +256,9 @@ Page({
       type: type.key,
       title,
       minutes: this.data.newPlan.minutes,
+      startDate: this.data.newPlan.startDate,
+      endDate: this.data.newPlan.endDate,
+      planTime: this.data.newPlan.planTime,
       status: 'todo',
       steps: defaultPlanSteps(type.key),
     }, 0));

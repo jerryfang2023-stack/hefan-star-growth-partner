@@ -112,14 +112,16 @@
 
 .composer textarea {
   flex: 1;
-  min-height: 66rpx;
-  max-height: 168rpx;
-  padding: 16rpx 20rpx;
+  height: 64rpx;
+  min-height: 64rpx;
+  max-height: 64rpx;
+  padding: 12rpx 20rpx;
   border: 1rpx solid #d6d2ef;
   border-radius: 24rpx;
   background: #ffffff;
   font-size: 26rpx;
-  line-height: 1.45;
+  line-height: 40rpx;
+  overflow: hidden;
 }
 
 .send-button {

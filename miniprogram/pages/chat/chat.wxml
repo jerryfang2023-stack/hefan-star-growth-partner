@@ -28,7 +28,7 @@
     <textarea
       value="{{draft}}"
       maxlength="500"
-      auto-height="true"
+      auto-height="{{false}}"
       placeholder="问盒饭..."
       bindinput="onInput"
     />

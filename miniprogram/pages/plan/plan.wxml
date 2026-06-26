@@ -33,6 +33,17 @@
       </picker>
       <input class="plan-input" type="number" value="{{newPlan.minutes}}" bindinput="onNewMinutesInput" />
     </view>
+    <view class="form-row date-row">
+      <picker mode="date" value="{{newPlan.startDate}}" bindchange="onNewStartDateChange">
+        <view class="plan-picker date-picker">开始 {{newPlan.startDate}}</view>
+      </picker>
+      <picker mode="date" value="{{newPlan.endDate}}" bindchange="onNewEndDateChange">
+        <view class="plan-picker date-picker">结束 {{newPlan.endDate}}</view>
+      </picker>
+      <picker mode="time" value="{{newPlan.planTime}}" bindchange="onNewTimeChange">
+        <view class="plan-picker date-picker">时间 {{newPlan.planTime}}</view>
+      </picker>
+    </view>
     <button class="secondary-button" bindtap="addPlan">加入计划</button>
   </view>
 
@@ -48,6 +59,7 @@
         <view class="plan-state">{{item.minutes}} 分钟 · {{item.statusText}}</view>
       </view>
       <view class="plan-title">{{item.title}}</view>
+      <view class="plan-schedule" wx:if="{{item.showSchedule}}">{{item.scheduleText}}</view>
       <view class="step" wx:for="{{item.steps}}" wx:key="*this">{{index + 1}}. {{item}}</view>
       <view class="plan-reason" wx:if="{{item.showReason}}">未完成原因：{{item.reason}}</view>
       <view class="plan-actions">
@@ -69,6 +81,7 @@
         <view class="plan-state">{{item.minutes}} 分钟 · {{item.statusText}}</view>
       </view>
       <view class="plan-title">{{item.title}}</view>
+      <view class="plan-schedule" wx:if="{{item.showSchedule}}">{{item.scheduleText}}</view>
       <view class="step" wx:for="{{item.steps}}" wx:key="*this">{{index + 1}}. {{item}}</view>
       <view class="plan-reason" wx:if="{{item.showReason}}">未完成原因：{{item.reason}}</view>
       <view class="plan-actions">

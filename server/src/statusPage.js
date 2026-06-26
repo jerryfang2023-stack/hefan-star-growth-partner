@@ -1182,6 +1182,18 @@
       gap: 8px;
     }
 
+    .plan-form-row-three {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(76px, 0.8fr);
+    }
+
+    .plan-field {
+      display: grid;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 850;
+    }
+
     .plan-input,
     .plan-select {
       width: 100%;
@@ -1232,6 +1244,14 @@
       color: var(--muted);
       font-size: 11px;
       font-weight: 850;
+    }
+
+    .plan-schedule {
+      margin: -2px 0 7px;
+      color: #5b5ce2;
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1.45;
     }
 
     .plan-reason {
@@ -1564,13 +1584,15 @@
     }
 
     textarea.chat-input {
+      height: 38px;
       min-height: 38px;
-      max-height: 92px;
-      padding: 9px 12px;
+      max-height: 38px;
+      padding: 8px 12px;
       border-color: #d6d2ef;
       border-radius: 16px;
       font-size: 14px;
-      line-height: 1.45;
+      line-height: 20px;
+      overflow: hidden;
     }
 
     .send-icon {
@@ -1832,7 +1854,7 @@
       <section id="chat" class="view chat-view">
         <div id="messages" class="messages"></div>
         <div class="composer chat-composer">
-          <textarea id="chat-input" class="chat-input" maxlength="500" placeholder="问盒饭..."></textarea>
+          <textarea id="chat-input" class="chat-input" rows="1" maxlength="500" placeholder="问盒饭..."></textarea>
           <button id="send-chat" class="send-icon" aria-label="发送">↑</button>
         </div>
       </section>
@@ -3379,6 +3401,26 @@
       return ['todo', 'doing', 'done', 'missed'].includes(value) ? value : 'todo';
     }
 
+    function normalizeDateValue(value) {
+      const text = String(value || '');
+      if (text.length !== 10 || text[4] !== '-' || text[7] !== '-') return '';
+      const parsed = new Date(text + 'T00:00:00');
+      return Number.isNaN(parsed.getTime()) ? '' : text;
+    }
+
+    function normalizeTimeValue(value) {
+      const text = String(value || '');
+      if (text.length !== 5 || text[2] !== ':') return '';
+      const hour = Number.parseInt(text.slice(0, 2), 10);
+      const minute = Number.parseInt(text.slice(3, 5), 10);
+      return hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59 ? text : '';
+    }
+
+    function todayInputDate() {
+      const date = new Date();
+      return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+    }
+
     function normalizePlanItem(item, index) {
       const type = item.type || (item.subject === '运动' ? 'sport' : 'learning');
       return {
@@ -3386,6 +3428,9 @@
         type: planTypeByKey(type).key,
         title: item.title || '小计划',
         minutes: Math.max(1, Number(item.minutes) || 15),
+        startDate: normalizeDateValue(item.startDate),
+        endDate: normalizeDateValue(item.endDate),
+        planTime: normalizeTimeValue(item.planTime || item.time),
         status: normalizePlanStatus(item.statusKey || item.status),
         reason: item.reason || '',
         steps: Array.isArray(item.steps) && item.steps.length ? item.steps : defaultPlanSteps(type)
@@ -3443,6 +3488,13 @@
       }[status] || '未开始';
     }
 
+    function planScheduleText(item) {
+      const dates = item.startDate && item.endDate
+        ? item.startDate + ' 至 ' + item.endDate
+        : (item.startDate || item.endDate || '');
+      return [dates, item.planTime].filter(Boolean).join(' · ');
+    }
+
     function planStats() {
       const items = state.planItems || [];
       const total = items.length;
@@ -3484,6 +3536,7 @@
     }
 
     function renderPlanForm() {
+      const today = todayInputDate();
       el('plan-form').innerHTML = [
         '<div class="plan-form">',
         '<input id="new-plan-title" class="plan-input" placeholder="新计划，比如：低运球 10 分钟" />',
@@ -3495,6 +3548,11 @@
         '</select>',
         '<input id="new-plan-minutes" class="plan-input" type="number" min="3" max="60" value="15" />',
         '</div>',
+        '<div class="plan-form-row plan-form-row-three">',
+        '<label class="plan-field"><span>开始</span><input id="new-plan-start" class="plan-input" type="date" value="' + today + '" /></label>',
+        '<label class="plan-field"><span>结束</span><input id="new-plan-end" class="plan-input" type="date" value="' + today + '" /></label>',
+        '<label class="plan-field"><span>时间</span><input id="new-plan-time" class="plan-input" type="time" value="19:30" /></label>',
+        '</div>',
         '<button class="secondary" data-plan-action="add">加入计划</button>',
         '</div>'
       ].join('');
@@ -3502,6 +3560,7 @@
 
     function renderPlanCard(item) {
       const type = planTypeByKey(item.type);
+      const schedule = planScheduleText(item);
       const actionButtons = item.status === 'done' || item.status === 'missed'
         ? [
             '<button data-plan-action="reset" data-plan-id="' + item.id + '">放回当前</button>',
@@ -3518,6 +3577,7 @@
         '<article class="card plan-card ' + item.status + '">',
         '<div class="plan-topline"><span class="plan-type">' + type.mark + ' ' + type.label + '</span><span class="plan-state">' + item.minutes + ' 分钟 · ' + planStatusLabel(item.status) + '</span></div>',
         '<h3>' + escapeHtml(item.title) + '</h3>',
+        schedule ? '<div class="plan-schedule">' + escapeHtml(schedule) + '</div>' : '',
         '<ol class="steps">' + item.steps.map(function (step) { return '<li>' + escapeHtml(step) + '</li>'; }).join('') + '</ol>',
         item.status === 'missed' && item.reason ? '<div class="plan-reason">未完成原因：' + escapeHtml(item.reason) + '</div>' : '',
         '<div class="plan-actions">',
@@ -3548,8 +3608,15 @@
       const title = el('new-plan-title').value.trim();
       const type = el('new-plan-type').value;
       const minutes = Number.parseInt(el('new-plan-minutes').value || '15', 10);
+      const startDate = el('new-plan-start').value;
+      const endDate = el('new-plan-end').value;
+      const planTime = el('new-plan-time').value;
       if (!title) {
         alert('先写一个计划名字。');
+        return;
+      }
+      if (startDate && endDate && endDate < startDate) {
+        alert('结束日期不能早于开始日期。');
         return;
       }
       state.planItems.unshift(normalizePlanItem({
@@ -3557,6 +3624,9 @@
         type: type,
         title: title,
         minutes: minutes,
+        startDate: startDate,
+        endDate: endDate,
+        planTime: planTime,
         status: 'todo',
         steps: defaultPlanSteps(type)
       }, 0));
