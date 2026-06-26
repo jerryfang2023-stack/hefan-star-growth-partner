@@ -71,6 +71,8 @@ const learningModule = {
   ],
 };
 
+const DAILY_QUEST_STORAGE_KEY = 'hefanStarDailyQuestSeenV1';
+
 const questionBanks = {
   word: [
     {
@@ -358,6 +360,52 @@ function difficultyLabel(card, index) {
   return '挑战';
 }
 
+function todayQuestDateKey() {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${now.getFullYear()}-${month}-${day}`;
+}
+
+function readDailyQuestSeen() {
+  const saved = wx.getStorageSync(DAILY_QUEST_STORAGE_KEY);
+  if (saved && saved.date === todayQuestDateKey() && saved.seen) return saved;
+  return { date: todayQuestDateKey(), seen: {} };
+}
+
+function writeDailyQuestSeen(record) {
+  wx.setStorageSync(DAILY_QUEST_STORAGE_KEY, record);
+}
+
+function nextDailyQuestionIndex(kind, previousIndex) {
+  const bank = questionBanks[kind] || [];
+  if (!bank.length) return 0;
+  const record = readDailyQuestSeen();
+  const seen = Array.isArray(record.seen[kind]) ? record.seen[kind] : [];
+  let candidates = bank
+    .map((_, index) => index)
+    .filter((index) => !seen.includes(index));
+  if (!candidates.length) {
+    record.seen[kind] = [];
+    candidates = bank.map((_, index) => index);
+    if (bank.length > 1 && Number.isInteger(previousIndex)) {
+      candidates = candidates.filter((index) => index !== previousIndex);
+    }
+  }
+  const nextIndex = candidates[0] || 0;
+  record.seen[kind] = Array.from(new Set([...(record.seen[kind] || []), nextIndex]));
+  writeDailyQuestSeen(record);
+  return nextIndex;
+}
+
+function remainingDailyQuestionCount(kind) {
+  const bank = questionBanks[kind] || [];
+  if (!bank.length) return 0;
+  const record = readDailyQuestSeen();
+  const seen = Array.isArray(record.seen[kind]) ? record.seen[kind] : [];
+  return Math.max(0, bank.length - seen.length);
+}
+
 const ACHIEVEMENT_STORAGE_KEY = 'hefanStarAchievementsV2';
 
 function emptyAchievements() {
@@ -427,8 +475,26 @@ Page({
 
   getGame(kind) {
     if (!this.gameState[kind]) {
+      const bank = questionBanks[kind] || [];
+      if (bank.length && remainingDailyQuestionCount(kind) <= 0) {
+        this.gameState[kind] = {
+          index: 0,
+          level: bank.length,
+          score: 0,
+          streak: 0,
+          answered: false,
+          complete: true,
+          exhausted: true,
+          feedback: '',
+          feedbackType: '',
+          reward: '',
+          saved: true,
+        };
+        return this.gameState[kind];
+      }
       this.gameState[kind] = {
-        index: 0,
+        index: nextDailyQuestionIndex(kind),
+        level: 0,
         score: 0,
         streak: 0,
         answered: false,
@@ -447,12 +513,17 @@ Page({
     if (bank) {
       const game = this.getGame(mission.kind);
       if (game.complete) {
+        const hasMoreToday = remainingDailyQuestionCount(mission.kind) > 0;
         return {
           mode: 'quest',
           complete: true,
+          canRestart: hasMoreToday,
+          exhaustedNote: hasMoreToday || game.exhausted ? '' : '这类题今天已经全部出现过了。换一个小游戏，明天再来会刷新。',
           kicker: '闯关完成',
           title: `${rewardName(mission.kind)} 到手`,
-          question: `这轮拿到 ${game.score} 分。${game.reward || '表现很稳，给自己一个轻轻的击掌。'}`,
+          question: game.exhausted
+            ? '这类题今天已经全部出现过了。换一个小游戏，明天再来会刷新。'
+            : `这轮拿到 ${game.score} 分。${game.reward || '表现很稳，给自己一个轻轻的击掌。'}`,
           level: bank.length,
           total: bank.length,
           score: game.score,
@@ -466,19 +537,20 @@ Page({
       return {
         mode: 'quest',
         ...card,
-        difficulty: difficultyLabel(card, game.index),
+        canRestart: remainingDailyQuestionCount(mission.kind) > 0,
+        difficulty: difficultyLabel(card, game.level || 0),
         nextPoints,
-        level: game.index + 1,
+        level: (game.level || 0) + 1,
         total: bank.length,
         score: game.score,
         streak: game.streak,
-        progress: Math.round(((game.index + (game.answered ? 1 : 0)) / bank.length) * 100),
+        progress: Math.round((((game.level || 0) + (game.answered ? 1 : 0)) / bank.length) * 100),
         answered: game.answered,
         feedback: game.feedback,
         feedbackType: game.feedbackType,
         hasAnswer: Array.isArray(card.answers),
         hasNote: Boolean(card.notePlaceholder),
-        nextLabel: game.index >= bank.length - 1 ? '领奖励' : '下一关',
+        nextLabel: (game.level || 0) >= bank.length - 1 ? '领奖励' : '下一关',
       };
     }
 
@@ -615,7 +687,7 @@ Page({
       return;
     }
 
-    if (game.index >= bank.length - 1) {
+    if ((game.level || 0) >= bank.length - 1) {
       game.complete = true;
       game.reward = game.score >= bank.length ? '连续闯完一轮，很有节奏。' : '完成比满分更重要，今天已经推进了。';
       writeAchievementRecord(mission.kind, mission, game, bank.length);
@@ -623,7 +695,8 @@ Page({
       return;
     }
 
-    game.index += 1;
+    game.level = (game.level || 0) + 1;
+    game.index = nextDailyQuestionIndex(mission.kind, game.index);
     game.answered = false;
     game.feedback = '';
     game.feedbackType = '';
@@ -631,7 +704,26 @@ Page({
   },
 
   restartQuest() {
-    this.gameState[this.data.selectedMission.kind] = undefined;
+    const kind = this.data.selectedMission.kind;
+    const bank = questionBanks[kind] || [];
+    if (bank.length && remainingDailyQuestionCount(kind) <= 0) {
+      this.gameState[kind] = undefined;
+      this.refreshPlayground();
+      return;
+    }
+    const previousIndex = this.gameState[kind] ? this.gameState[kind].index : null;
+    this.gameState[kind] = {
+      index: nextDailyQuestionIndex(kind, previousIndex),
+      level: 0,
+      score: 0,
+      streak: 0,
+      answered: false,
+      complete: false,
+      feedback: '',
+      feedbackType: '',
+      reward: '',
+      saved: false,
+    };
     this.refreshPlayground();
   },
 

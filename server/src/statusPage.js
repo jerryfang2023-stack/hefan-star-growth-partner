@@ -1989,6 +1989,7 @@
       'music-rhythm-practice',
       'habit-bedtime-bag'
     ];
+    const DAILY_QUEST_KEY = 'hefan-star-daily-quest-seen-v1';
 
     const playCards = {
       word: {
@@ -2403,6 +2404,61 @@
         }
       ]
     };
+
+    function todayQuestDateKey() {
+      const now = new Date();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      return now.getFullYear() + '-' + month + '-' + day;
+    }
+
+    function loadDailyQuestSeen() {
+      try {
+        const raw = localStorage.getItem(DAILY_QUEST_KEY);
+        const saved = raw ? JSON.parse(raw) : null;
+        if (saved && saved.date === todayQuestDateKey() && saved.seen) return saved;
+      } catch (error) {
+        // A fresh daily pool is fine if storage is unavailable.
+      }
+      return { date: todayQuestDateKey(), seen: {} };
+    }
+
+    function saveDailyQuestSeen(record) {
+      try {
+        localStorage.setItem(DAILY_QUEST_KEY, JSON.stringify(record));
+      } catch (error) {
+        // The page can still avoid repeats during this session.
+      }
+    }
+
+    function nextDailyQuestionIndex(kind, previousIndex) {
+      const bank = questionBanks[kind] || [];
+      if (!bank.length) return 0;
+      const record = loadDailyQuestSeen();
+      const seen = Array.isArray(record.seen[kind]) ? record.seen[kind] : [];
+      let candidates = bank
+        .map(function (_, index) { return index; })
+        .filter(function (index) { return !seen.includes(index); });
+      if (!candidates.length) {
+        record.seen[kind] = [];
+        candidates = bank.map(function (_, index) { return index; });
+        if (bank.length > 1 && Number.isInteger(previousIndex)) {
+          candidates = candidates.filter(function (index) { return index !== previousIndex; });
+        }
+      }
+      const nextIndex = candidates[0] || 0;
+      record.seen[kind] = Array.from(new Set([].concat(record.seen[kind] || [], nextIndex)));
+      saveDailyQuestSeen(record);
+      return nextIndex;
+    }
+
+    function remainingDailyQuestionCount(kind) {
+      const bank = questionBanks[kind] || [];
+      if (!bank.length) return 0;
+      const record = loadDailyQuestSeen();
+      const seen = Array.isArray(record.seen[kind]) ? record.seen[kind] : [];
+      return Math.max(0, bank.length - seen.length);
+    }
 
     function el(id) {
       return document.getElementById(id);
@@ -2929,9 +2985,26 @@
       return Array.isArray(questionBanks[kind]);
     }
 
-    function createGame() {
+    function createGame(kind, previousIndex) {
+      const bank = questionBanks[kind] || [];
+      if (bank.length && remainingDailyQuestionCount(kind) <= 0) {
+        return {
+          index: Number.isInteger(previousIndex) ? previousIndex : 0,
+          level: bank.length,
+          score: 0,
+          streak: 0,
+          answered: false,
+          complete: true,
+          exhausted: true,
+          feedback: '',
+          feedbackType: '',
+          reward: '',
+          saved: true
+        };
+      }
       return {
-        index: 0,
+        index: nextDailyQuestionIndex(kind, previousIndex),
+        level: 0,
         score: 0,
         streak: 0,
         answered: false,
@@ -2944,12 +3017,13 @@
     }
 
     function getGame(kind) {
-      if (!state.gameState[kind]) state.gameState[kind] = createGame();
+      if (!state.gameState[kind]) state.gameState[kind] = createGame(kind);
       return state.gameState[kind];
     }
 
     function resetGame(kind) {
-      state.gameState[kind] = createGame();
+      const previous = state.gameState[kind] ? state.gameState[kind].index : null;
+      state.gameState[kind] = createGame(kind, previous);
       return state.gameState[kind];
     }
 
@@ -2986,11 +3060,11 @@
     }
 
     function renderQuestProgress(game, total) {
-      const done = Math.min(total, game.index + (game.answered || game.complete ? 1 : 0));
+      const done = Math.min(total, (game.level || 0) + (game.answered || game.complete ? 1 : 0));
       const percent = total ? Math.round((done / total) * 100) : 0;
       return [
         '<div class="level-row">',
-        '<span>第 ' + Math.min(game.index + 1, total) + ' / ' + total + ' 关</span>',
+        '<span>第 ' + Math.min((game.level || 0) + 1, total) + ' / ' + total + ' 关</span>',
         '<span>' + game.score + ' 分 · 连对 ' + game.streak + '</span>',
         '</div>',
         '<div class="progress-track"><div class="progress-fill" style="width:' + percent + '%"></div></div>'
@@ -3028,15 +3102,17 @@
         const bank = questionBanks[kind];
         const game = getGame(kind);
         if (game.complete) {
+          const hasMoreToday = remainingDailyQuestionCount(kind) > 0;
           el('home-playground').innerHTML = [
             '<article class="play-card">',
-            '<div class="play-kicker">闯关完成</div>',
-            '<div class="play-title">' + escapeHtml(rewardName(kind)) + ' 到手</div>',
-            '<div class="game-complete">这轮拿到 ' + game.score + ' 分。' + escapeHtml(game.reward || '表现很稳，给自己一个轻轻的击掌。') + '</div>',
+            '<div class="play-kicker">' + (game.exhausted ? '今日已刷完' : '闯关完成') + '</div>',
+            '<div class="play-title">' + (game.exhausted ? '换个小游戏' : escapeHtml(rewardName(kind)) + ' 到手') + '</div>',
+            game.exhausted ? '' : '<div class="game-complete">这轮拿到 ' + game.score + ' 分。' + escapeHtml(game.reward || '表现很稳，给自己一个轻轻的击掌。') + '</div>',
+            hasMoreToday ? '' : '<div class="game-complete">这类题今天已经全部出现过了。为了不重复，可以换一个小游戏，明天再来会刷新。</div>',
             renderQuestProgress(game, bank.length),
             '<div class="play-actions">',
             '<button class="secondary" data-play-action="view-profile">去个人中心</button>',
-            '<button class="secondary" data-play-action="restart-game">再玩一轮</button>',
+            hasMoreToday ? '<button class="secondary" data-play-action="restart-game">再玩一轮</button>' : '',
             '<button class="secondary ghost-link" data-play-action="ask-hefan">继续问盒饭</button>',
             '</div>',
             '</article>'
@@ -3046,21 +3122,22 @@
         }
 
         const card = bank[game.index] || bank[0];
+        const hasMoreToday = remainingDailyQuestionCount(kind) > 0;
         el('home-playground').innerHTML = [
           '<article class="play-card">',
           '<div class="play-kicker">' + escapeHtml(card.kicker) + '</div>',
           '<div class="play-title">' + escapeHtml(card.title) + '</div>',
           renderQuestProgress(game, bank.length),
-          renderQuestMeta(card, game),
+          renderQuestMeta(card, Object.assign({}, game, { index: game.level || 0 })),
           '<div class="play-question">' + escapeHtml(card.question) + '</div>',
           renderStepList(card.steps),
           renderHomeTools(card, game),
           '<div class="play-actions">',
           game.answered
-            ? '<button class="secondary" data-play-action="next-level">' + (game.index >= bank.length - 1 ? '领奖励' : '下一关') + '</button>'
+            ? '<button class="secondary" data-play-action="next-level">' + ((game.level || 0) >= bank.length - 1 ? '领奖励' : '下一关') + '</button>'
             : '<button class="secondary" data-play-action="done-play">先这样</button>',
           '<button class="secondary ghost-link" data-play-action="ask-hefan">继续问盒饭</button>',
-          '<button class="secondary ghost-link" data-play-action="restart-game">重开</button>',
+          hasMoreToday ? '<button class="secondary ghost-link" data-play-action="restart-game">重开</button>' : '',
           '</div>',
           '</article>'
         ].join('');
@@ -3186,7 +3263,7 @@
         setPlayFeedback('先过这一关，再去下一关。', 'try');
         return;
       }
-      if (game.index >= bank.length - 1) {
+      if ((game.level || 0) >= bank.length - 1) {
         game.complete = true;
         game.reward = game.score >= bank.length
           ? '连续闯完一轮，很有节奏。'
@@ -3195,7 +3272,8 @@
         renderHomePlayground();
         return;
       }
-      game.index += 1;
+      game.level = (game.level || 0) + 1;
+      game.index = nextDailyQuestionIndex(kind, game.index);
       game.answered = false;
       game.feedback = '';
       game.feedbackType = '';

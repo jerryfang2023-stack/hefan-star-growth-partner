@@ -37,6 +37,9 @@
       </view>
 
       <view class="play-question">{{playground.question}}</view>
+      <view class="play-feedback try" wx:if="{{playground.exhaustedNote}}">
+        {{playground.exhaustedNote}}
+      </view>
       <view class="mini-steps" wx:if="{{playground.steps.length}}">
         <view class="mini-step" wx:for="{{playground.steps}}" wx:key="*this">{{item}}</view>
       </view>
@@ -68,7 +71,7 @@
           {{playground.nextLabel}}
         </button>
         <button
-          wx:if="{{playground.mode === 'quest' && playground.complete}}"
+          wx:if="{{playground.mode === 'quest' && playground.complete && playground.canRestart}}"
           class="secondary-button compact-button"
           bindtap="restartQuest"
         >
@@ -90,7 +93,7 @@
         </button>
         <button class="secondary-button compact-button ghost-button" bindtap="askHefan">继续问盒饭</button>
         <button
-          wx:if="{{playground.mode === 'quest' && !playground.complete}}"
+          wx:if="{{playground.mode === 'quest' && !playground.complete && playground.canRestart}}"
           class="secondary-button compact-button ghost-button"
           bindtap="restartQuest"
         >
