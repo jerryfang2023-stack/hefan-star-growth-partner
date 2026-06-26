@@ -593,18 +593,25 @@
     }
 
     .bento-wallet {
-      min-width: 78px;
-      padding: 7px 8px;
-      border-radius: 8px;
-      color: #4a35a3;
-      background: #f0edff;
+      min-width: 154px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
       text-align: center;
       font-size: 11px;
       font-weight: 850;
     }
 
-    .wallet-row + .wallet-row {
-      margin-top: 6px;
+    .wallet-row {
+      padding: 7px 8px;
+      border-radius: 8px;
+      color: #4a35a3;
+      background: #f0edff;
+    }
+
+    .wallet-row.coins {
+      color: #7a4a12;
+      background: #fff0c7;
     }
 
     .bento-wallet strong {
@@ -669,27 +676,65 @@
       letter-spacing: 0;
     }
 
-    .bento-slots {
+    .bento-plating {
+      min-height: 154px;
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
+      align-items: stretch;
       margin-top: 10px;
+      padding: 0;
+      overflow: hidden;
+      border: 1px dashed rgba(207, 184, 145, 0.78);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.52);
     }
 
-    .bento-slot {
-      min-height: 52px;
+    .bento-empty-plate {
+      width: 100%;
+      min-height: 154px;
+      border-radius: 8px;
+      background:
+        radial-gradient(circle at 50% 52%, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.24) 56%, transparent 57%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.58), rgba(244, 228, 202, 0.48));
+    }
+
+    .bento-stack {
+      position: relative;
+      width: 100%;
+      min-height: 154px;
+    }
+
+    .rice-bed {
+      min-height: 154px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-auto-rows: 1fr;
+      gap: 4px;
+      padding: 7px;
+      border-radius: 8px;
+      color: #6e5128;
+      background: linear-gradient(145deg, #ffffff, #f4edf8);
+      box-shadow: inset 0 -10px 26px rgba(232, 219, 190, 0.52);
+    }
+
+    .rice-tile {
+      min-height: 42px;
       display: grid;
       place-items: center;
-      border: 1px dashed #cfb891;
-      border-radius: 8px;
-      color: #a08662;
-      background: rgba(255, 255, 255, 0.62);
-      font-size: 11px;
-      font-weight: 850;
+    }
+
+    .bento-toppings {
+      position: absolute;
+      inset: 8px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-auto-rows: 1fr;
+      gap: 5px;
     }
 
     .bento-piece {
-      min-height: 52px;
+      width: 100%;
+      height: 100%;
+      min-height: 44px;
       display: grid;
       place-items: center;
       border-radius: 14px;
@@ -701,10 +746,15 @@
     }
 
     .food-image {
-      width: 38px;
-      height: 38px;
+      width: 100%;
+      height: 100%;
       display: block;
       object-fit: contain;
+    }
+
+    .rice-bed .food-image {
+      width: 100%;
+      height: 100%;
     }
 
     .bento-piece.rice { background: linear-gradient(145deg, #ffffff, #f1edf8); }
@@ -774,8 +824,8 @@
     }
 
     .ingredient-icon .food-image {
-      width: 35px;
-      height: 35px;
+      width: 42px;
+      height: 42px;
     }
 
     .ingredient-name,
@@ -1191,8 +1241,17 @@
       gap: 8px;
     }
 
-    .plan-form-row-three {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(76px, 0.8fr);
+    .plan-type-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .plan-schedule-fields {
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid rgba(220, 216, 251, 0.74);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.56);
     }
 
     .plan-field {
@@ -1840,9 +1899,9 @@
               <span class="quest-card-body"><span class="quest-card-title">数学换条路</span><span class="quest-card-desc">有理数、比例、百分比</span><span class="quest-card-tags"><span class="quest-card-tag">数学</span><span class="quest-card-tag">难度上升</span></span></span>
               <img class="quest-card-art" src="/assets/game-math.jpg?v=learning-card-1" alt="" />
             </button>
-            <button class="quest-card scroll mission-option" data-kind="idiom" data-title="诗词小侦探" data-desc="看诗句，抓线索。" data-art="/assets/game-poetry.jpg?v=learning-card-1" data-prompt="盒饭，玩一局诗词小侦探。你给我一句公开古诗词线索，我来猜作者、意象或意思。">
+            <button class="quest-card scroll mission-option" data-kind="idiom" data-title="诗词小侦探" data-desc="猜作者，接下一句。" data-art="/assets/game-poetry.jpg?v=learning-card-1" data-prompt="盒饭，玩一局诗词小侦探。你出作者题或下一句题，我来答。">
               <span class="quest-card-mark">诗</span>
-              <span class="quest-card-body"><span class="quest-card-title">诗词小侦探</span><span class="quest-card-desc">作者、意象、情绪线索</span><span class="quest-card-tags"><span class="quest-card-tag">语文</span><span class="quest-card-tag">观察力</span></span></span>
+              <span class="quest-card-body"><span class="quest-card-title">诗词小侦探</span><span class="quest-card-desc">作者、下一句</span><span class="quest-card-tags"><span class="quest-card-tag">语文</span><span class="quest-card-tag">背诵</span></span></span>
             </button>
             <button class="quest-card note mission-option" data-kind="mistake" data-title="错题翻盘" data-desc="找错因，再来一题。" data-art="/assets/game-review.jpg?v=learning-card-1" data-prompt="盒饭，我有一道错题想翻盘。你先问我题目和错在哪里，再给我一道类似的小练习。">
               <span class="quest-card-mark">错</span>
@@ -1933,8 +1992,8 @@
               <div class="muted">用积分买食材，包装给顾客赚金币。</div>
             </div>
             <div class="bento-wallet">
-              <div class="wallet-row">积分<strong id="bento-wallet">0</strong></div>
-              <div class="wallet-row">金币<strong id="bento-coins">0</strong></div>
+              <div class="wallet-row points">积分<strong id="bento-wallet">0</strong></div>
+              <div class="wallet-row coins">金币<strong id="bento-coins">0</strong></div>
             </div>
           </div>
           <div id="bento-game"></div>
@@ -2037,12 +2096,12 @@
       },
       idiom: {
         kicker: '语文小游戏',
-        title: '看诗句抓线索',
+        title: '作者或下一句',
         question: '“春色满园关不住”的下一句是？',
         answers: ['一枝红杏出墙来'],
         success: '对，是“一枝红杏出墙来”。',
         retry: '想想春天里从墙边探出来的是什么花枝。',
-        prompt: '盒饭，我想继续玩诗词小侦探。你再给我一句公开古诗词线索。'
+        prompt: '盒饭，我想继续玩诗词小侦探。你出作者题或下一句题。'
       },
       math: {
         kicker: '数学小关卡',
@@ -2216,68 +2275,100 @@
       ],
       idiom: [
         {
-          kicker: '诗词第 1 关',
-          title: '诗人是谁',
-          question: '“千磨万击还坚劲，任尔东西南北风。”这首《竹石》的作者是谁？',
-          answers: ['郑燮', '郑板桥'],
-          success: '对，是郑燮，也叫郑板桥。这句写的是竹子的坚韧。',
-          retry: '这位诗人也叫郑板桥。'
+          kicker: '语文第 1 关',
+          title: '作者是谁',
+          question: '《咏鹅》的作者是谁？',
+          answers: ['骆宾王'],
+          success: '对，是骆宾王。',
+          retry: '想想这首诗的作者是唐代小诗人。'
         },
         {
-          kicker: '诗词第 2 关',
-          title: '下一句',
-          question: '“春色满园关不住”的下一句是？',
-          answers: ['一枝红杏出墙来'],
-          success: '对，是“一枝红杏出墙来”。画面一下就亮了。',
-          retry: '想想春天里从墙边探出来的是什么花枝。'
+          kicker: '语文第 2 关',
+          title: '续写下一句',
+          question: '“举头望明月”的下一句是？',
+          answers: ['低头思故乡'],
+          success: '对，是“低头思故乡”。',
+          retry: '这首是《静夜思》，下一句写想家。'
         },
         {
-          kicker: '诗词第 3 关',
-          title: '抓意象',
-          question: '“明月几时有，把酒问青天。”这里最明显的意象是什么？',
-          answers: ['明月', '月亮', '月'],
-          success: '对，是明月。抓住意象，理解诗就容易多了。',
-          retry: '先找这句里最亮、最像画面的那个词。'
+          kicker: '语文第 3 关',
+          title: '续写下一句',
+          question: '“白日依山尽”的下一句是？',
+          answers: ['黄河入海流'],
+          success: '对，是“黄河入海流”。',
+          retry: '下一句里有“黄河”和“大海”。'
         },
         {
-          kicker: '诗词第 4 关',
-          title: '判断季节',
-          question: '“接天莲叶无穷碧，映日荷花别样红。”写的是哪个季节？',
-          answers: ['夏天', '夏季', '夏'],
-          success: '对，是夏天。莲叶、荷花就是关键线索。',
-          retry: '荷花最常和哪个季节联系在一起？'
+          kicker: '语文第 4 关',
+          title: '作者是谁',
+          question: '《春晓》的作者是谁？',
+          answers: ['孟浩然'],
+          success: '对，是孟浩然。',
+          retry: '这首诗的作者是唐代诗人，名字三个字。'
         },
         {
-          kicker: '诗词第 5 关',
-          title: '看情绪',
-          question: '“劝君更尽一杯酒，西出阳关无故人。”这两句更像在表达什么心情？',
-          answers: ['送别', '离别', '不舍', '惜别'],
-          success: '对，是送别时的不舍。先抓“阳关”和“无故人”。',
-          retry: '朋友要去远方，诗人在劝他再喝一杯。'
+          kicker: '语文第 5 关',
+          title: '续写下一句',
+          question: '“小荷才露尖尖角”的下一句是？',
+          answers: ['早有蜻蜓立上头'],
+          success: '对，是“早有蜻蜓立上头”。',
+          retry: '下一句里有一只小昆虫停在上面。'
         },
         {
-          kicker: '诗词第 6 关',
-          title: '诗句出处',
-          question: '“粉骨碎身浑不怕，要留清白在人间。”出自哪首诗？',
-          answers: ['石灰吟'],
-          success: '对，是《石灰吟》。这类题先抓“清白”这个关键词。',
-          retry: '题目和“石灰”有关，诗名三个字。'
+          kicker: '语文第 6 关',
+          title: '作者是谁',
+          question: '“独在异乡为异客，每逢佳节倍思亲。”的作者是谁？',
+          answers: ['王维'],
+          success: '对，是王维。',
+          retry: '这位唐代诗人也写过《山居秋暝》。'
         },
         {
-          kicker: '诗词第 7 关',
-          title: '修辞小眼睛',
-          question: '“飞流直下三千尺，疑是银河落九天。”这里主要用了夸张还是反问？',
-          answers: ['夸张'],
-          success: '对，是夸张。三千尺让瀑布显得特别有气势。',
-          retry: '想想“三千尺”是不是故意把感觉放大了。'
+          kicker: '语文第 7 关',
+          title: '续写下一句',
+          question: '“接天莲叶无穷碧”的下一句是？',
+          answers: ['映日荷花别样红'],
+          success: '对，是“映日荷花别样红”。',
+          retry: '下一句写阳光下的荷花。'
         },
         {
-          kicker: '诗词第 8 关',
-          title: '关键词',
-          question: '“山重水复疑无路，柳暗花明又一村。”哪两个字最能表示“转机出现”？',
-          answers: ['又一村', '柳暗花明'],
-          success: '对，“柳暗花明”就是从困难里看见新路。',
-          retry: '前半句像没路了，后半句突然出现了什么？'
+          kicker: '语文第 8 关',
+          title: '作者是谁',
+          question: '“飞流直下三千尺，疑是银河落九天。”的作者是谁？',
+          answers: ['李白', '李太白'],
+          success: '对，是李白。',
+          retry: '这位诗人被称为“诗仙”。'
+        },
+        {
+          kicker: '语文第 9 关',
+          title: '续写下一句',
+          question: '“春风又绿江南岸”的下一句是？',
+          answers: ['明月何时照我还'],
+          success: '对，是“明月何时照我还”。',
+          retry: '下一句里有明月，也有归家的意思。'
+        },
+        {
+          kicker: '语文第 10 关',
+          title: '作者是谁',
+          question: '“横看成岭侧成峰，远近高低各不同。”的作者是谁？',
+          answers: ['苏轼', '苏东坡'],
+          success: '对，是苏轼。',
+          retry: '这位宋代诗人也叫苏东坡。'
+        },
+        {
+          kicker: '语文第 11 关',
+          title: '续写下一句',
+          question: '“千磨万击还坚劲”的下一句是？',
+          answers: ['任尔东西南北风'],
+          success: '对，是“任尔东西南北风”。',
+          retry: '下一句写东、西、南、北的风。'
+        },
+        {
+          kicker: '语文第 12 关',
+          title: '作者是谁',
+          question: '《石灰吟》的作者是谁？',
+          answers: ['于谦'],
+          success: '对，是于谦。',
+          retry: '这位明代诗人写下“要留清白在人间”。'
         }
       ],
       math: [
@@ -2380,27 +2471,55 @@
       reading: [
         {
           kicker: '阅读第 1 关',
+          title: '一年级字词',
+          question: '读一句话，找出里面表示“谁”的词，比如“小猫在睡觉”里的“小猫”。',
+          notePlaceholder: '表示谁的词是...',
+          steps: ['先问“这句话写谁”。', '找到人、动物或事物。', '不用写很长。']
+        },
+        {
+          kicker: '阅读第 2 关',
+          title: '一年级标点',
+          question: '看到句号“。”时，读句子应该停一下还是继续冲过去？',
+          notePlaceholder: '我觉得应该...',
+          steps: ['句号表示一句话结束。', '读到这里停一停。', '再读下一句。']
+        },
+        {
+          kicker: '阅读第 3 关',
+          title: '二年级量词',
+          question: '给“鱼”选一个合适的量词：一（ ）鱼。你会填什么？',
+          notePlaceholder: '我会填...',
+          steps: ['先想生活里怎么说。', '可以说“一条鱼”。', '量词要和事物搭配。']
+        },
+        {
+          kicker: '阅读第 4 关',
+          title: '二年级顺序',
+          question: '读一小段故事，找出“先发生”的一件事。',
+          notePlaceholder: '先发生的是...',
+          steps: ['找“先、然后、接着、最后”。', '没有这些词，就看句子顺序。', '只写一件事。']
+        },
+        {
+          kicker: '阅读第 5 关',
           title: '看标题',
           question: '写下课文标题里最重要的一个词，再猜它可能写什么。',
           notePlaceholder: '关键词是...，我猜...',
           steps: ['标题常常藏着中心。', '先找名词或动词。', '猜错也没关系，读完再改。']
         },
         {
-          kicker: '阅读第 2 关',
+          kicker: '阅读第 6 关',
           title: '找重复词',
           question: '读一段课文，找一个重复出现或反复强调的词。',
           notePlaceholder: '重复词是...',
           steps: ['重复词通常很重要。', '可以是人物、地点、动作或心情。', '把它和标题放在一起想。']
         },
         {
-          kicker: '阅读第 3 关',
+          kicker: '阅读第 7 关',
           title: '抓变化',
           question: '人物或事情前后有什么变化？写一句。',
           notePlaceholder: '变化是...',
           steps: ['先看开头。', '再看结尾。', '比较中间发生了什么。']
         },
         {
-          kicker: '阅读第 4 关',
+          kicker: '阅读第 8 关',
           title: '诗句画面',
           question: '选一句古诗词，写下你脑子里出现的一个画面。',
           notePlaceholder: '我看到的画面是...',
@@ -2564,12 +2683,12 @@
     ];
     const BENTO_KEY = 'hefan-star-bento-v1';
     const BENTO_INGREDIENTS = [
-      { key: 'rice', name: '大米饭', mark: '饭', price: 3, level: 1, asset: '/assets/food-rice.png?v=bento-food-1' },
-      { key: 'cabbage', name: '白菜', mark: '菜', price: 8, level: 2, asset: '/assets/food-cabbage.png?v=bento-food-1' },
-      { key: 'drumstick', name: '鸡腿', mark: '腿', price: 15, level: 3, asset: '/assets/food-drumstick.png?v=bento-food-1' },
-      { key: 'egg', name: '煎蛋', mark: '蛋', price: 28, level: 4, asset: '/assets/food-egg.png?v=bento-food-1' },
-      { key: 'corn', name: '玉米', mark: '玉', price: 45, level: 5, asset: '/assets/food-corn.png?v=bento-food-1' },
-      { key: 'shrimp', name: '虾仁', mark: '虾', price: 70, level: 6, asset: '/assets/food-shrimp.png?v=bento-food-1' }
+      { key: 'rice', name: '大米饭', mark: '饭', price: 3, level: 1, asset: '/assets/food-rice.png?v=bento-food-4' },
+      { key: 'cabbage', name: '白菜', mark: '菜', price: 8, level: 2, asset: '/assets/food-cabbage.png?v=bento-food-4' },
+      { key: 'drumstick', name: '鸡腿', mark: '腿', price: 15, level: 3, asset: '/assets/food-drumstick.png?v=bento-food-4' },
+      { key: 'egg', name: '煎蛋', mark: '蛋', price: 28, level: 4, asset: '/assets/food-egg.png?v=bento-food-4' },
+      { key: 'corn', name: '玉米', mark: '玉', price: 45, level: 5, asset: '/assets/food-corn.png?v=bento-food-4' },
+      { key: 'shrimp', name: '虾仁', mark: '虾', price: 70, level: 6, asset: '/assets/food-shrimp.png?v=bento-food-4' }
     ];
     const BENTO_CUSTOMERS = [
       { key: 'momo', name: '墨墨', request: ['rice', 'cabbage'], rewardCoins: 8, note: '今天想要清爽一点。' },
@@ -2718,10 +2837,21 @@
       });
     }
 
+    function bentoHasRice(bento) {
+      return Boolean(bento && Array.isArray(bento.lunchbox) && bento.lunchbox.includes('rice'));
+    }
+
     function renderBentoPiece(key) {
       const item = ingredientByKey(key);
-      if (!item) return '<div class="bento-slot">空</div>';
+      if (!item) return '';
       return '<div class="bento-piece ' + item.key + '"><img class="food-image" src="' + item.asset + '" alt="" /></div>';
+    }
+
+    function renderRiceTiles(item) {
+      if (!item) return '';
+      return Array.from({ length: 9 }, function (_, index) {
+        return '<div class="rice-tile"><img class="food-image" src="' + item.asset + '" alt="" /></div>';
+      }).join('');
     }
 
     function renderCapacityUpgrade() {
@@ -2737,7 +2867,7 @@
         '<div class="bento-upgrade-card">',
         '<div>',
         '<div class="upgrade-title">饭盒容量 Lv.' + level + '</div>',
-        '<div class="upgrade-meta">现在 ' + capacity + ' 格' + (maxed ? ' · 最多 11 格' : ' · 下一级 ' + bentoCapacity(level + 1) + ' 格') + '</div>',
+        '<div class="upgrade-meta">现在 ' + capacity + ' 格' + (maxed ? ' · 最多 11 格' : ' · 下一级 ' + bentoCapacity(level + 1) + ' 格 · 需要 ' + price + ' 金币') + '</div>',
         '</div>',
         '<button class="bento-buy" data-bento-action="upgrade"' + (disabled ? ' disabled' : '') + '>' + label + '</button>',
         '</div>'
@@ -2748,24 +2878,30 @@
       const bento = state.bento || emptyBento();
       const level = clampBentoCapacityLevel(bento.capacityLevel);
       const capacity = bentoCapacity(level);
-      const available = availableBentoPoints();
-      const full = bento.lunchbox.length >= capacity;
-      const slots = Array.from({ length: capacity }, function (_, index) {
-        return bento.lunchbox[index] ? renderBentoPiece(bento.lunchbox[index]) : '<div class="bento-slot">空</div>';
-      }).join('');
+      const hasRice = bentoHasRice(bento);
+      const toppings = bento.lunchbox
+        .filter(function (key) { return key !== 'rice'; })
+        .map(renderBentoPiece)
+        .join('');
+      const riceItem = ingredientByKey('rice');
+      const plating = hasRice
+        ? [
+          '<div class="bento-stack">',
+          '<div class="rice-bed">',
+          renderRiceTiles(riceItem),
+          '</div>',
+          toppings ? '<div class="bento-toppings">' + toppings + '</div>' : '',
+          '</div>'
+        ].join('')
+        : '<div class="bento-empty-plate" aria-label="空盒饭"></div>';
       return [
         '<div class="bento-stage">',
         renderCapacityUpgrade(),
         '<div class="lunchbox">',
-        '<div class="lunchbox-title">空盒饭 · ' + capacity + ' 格</div>',
-        '<div class="bento-slots">' + slots + '</div>',
+        '<div class="lunchbox-title">' + (hasRice ? '盒饭 · 已放 ' + bento.lunchbox.length + ' / ' + capacity : '空盒饭 · 先铺米饭') + '</div>',
+        '<div class="bento-plating">' + plating + '</div>',
         '</div>',
         '<div class="bento-actions">',
-        BENTO_INGREDIENTS.filter(function (item) { return bento.unlocked.includes(item.key); }).map(function (item) {
-          const disabled = full || available < item.price;
-          const label = full ? '饭盒满了' : (available >= item.price ? '装' + item.name + ' · ' + item.price + '分' : '积分不足');
-          return '<button class="bento-action" data-bento-action="add" data-ingredient="' + item.key + '"' + (disabled ? ' disabled' : '') + '>' + escapeHtml(label) + '</button>';
-        }).join(''),
         '<button class="bento-action" data-bento-action="clear">清空盒饭</button>',
         '</div>',
         '</div>'
@@ -2775,18 +2911,33 @@
     function renderIngredientShop() {
       const bento = state.bento || emptyBento();
       const available = availableBentoPoints();
+      const capacity = bentoCapacity(bento.capacityLevel);
+      const full = bento.lunchbox.length >= capacity;
+      const hasRice = bentoHasRice(bento);
       return '<div class="ingredient-shop">' + BENTO_INGREDIENTS.map(function (item) {
         const unlocked = bento.unlocked.includes(item.key);
         const canStep = canUnlockIngredient(item);
         const affordable = available >= item.price;
-        const disabled = unlocked || !canStep || !affordable;
-        const label = unlocked ? '已解锁' : (!canStep ? '先解锁上一级' : (affordable ? item.price + ' 分解锁' : '积分不足'));
-        const lockedClass = disabled ? 'locked' : 'unlocked';
+        const buyDisabled = !canStep || !affordable;
+        const isRice = item.key === 'rice';
+        const addDisabled = full || !affordable || (isRice && hasRice) || (!isRice && !hasRice);
+        const action = unlocked ? 'add' : 'buy';
+        const disabled = unlocked ? addDisabled : buyDisabled;
+        const label = unlocked
+          ? (full
+            ? '饭盒满了'
+            : (isRice && hasRice
+              ? '米饭已铺好'
+              : (!isRice && !hasRice
+                ? '先铺米饭'
+                : (affordable ? (isRice ? '购买铺米饭 · ' : '购买放置 · ') + item.price + '分' : '积分不足'))))
+          : (!canStep ? '先解锁上一级' : (affordable ? item.price + ' 分解锁' : '积分不足'));
+        const lockedClass = unlocked || !disabled ? 'unlocked' : 'locked';
         return [
           '<div class="ingredient-card ' + lockedClass + '">',
           '<div class="ingredient-icon"><img class="food-image" src="' + item.asset + '" alt="" /></div>',
-          '<div><div class="ingredient-name">' + escapeHtml(item.name) + '</div><div class="ingredient-meta">等级 ' + item.level + ' · 解锁 ' + item.price + ' 分 · 装入 ' + item.price + ' 分</div></div>',
-          '<button class="bento-buy" data-bento-action="buy" data-ingredient="' + item.key + '"' + (disabled ? ' disabled' : '') + '>' + label + '</button>',
+          '<div><div class="ingredient-name">' + escapeHtml(item.name) + '</div><div class="ingredient-meta">等级 ' + item.level + ' · 解锁 ' + item.price + ' 分 · 每次购买 ' + item.price + ' 分</div></div>',
+          '<button class="bento-buy" data-bento-action="' + action + '" data-ingredient="' + item.key + '"' + (disabled ? ' disabled' : '') + '>' + label + '</button>',
           '</div>'
         ].join('');
       }).join('') + '</div>';
@@ -2837,7 +2988,7 @@
       } else {
         bento.unlocked.push(key);
         bento.spentPoints += item.price;
-        bento.feedback = item.name + ' 解锁了。以后每次装入也会花 ' + item.price + ' 分。';
+        bento.feedback = item.name + ' 解锁了。以后每次放进饭盒都要购买一次，花 ' + item.price + ' 分。';
       }
       state.bento = bento;
       saveBento();
@@ -2849,14 +3000,21 @@
       const bento = state.bento || emptyBento();
       if (!item || !bento.unlocked.includes(key)) return;
       const capacity = bentoCapacity(bento.capacityLevel);
+      const hasRice = bentoHasRice(bento);
       if (bento.lunchbox.length >= capacity) {
         bento.feedback = '盒饭已经满了，升级容量或先包装。';
+      } else if (key === 'rice' && hasRice) {
+        bento.feedback = '米饭已经铺好了，接下来放食材。';
+      } else if (key !== 'rice' && !hasRice) {
+        bento.feedback = '先铺一层大米饭，再放其它食材。';
       } else if (availableBentoPoints() < item.price) {
-        bento.feedback = '积分不够装' + item.name + '，先去闯一关赚分。';
+        bento.feedback = '积分不够购买' + item.name + '，先去闯一关赚分。';
       } else {
         bento.spentPoints += item.price;
         bento.lunchbox.push(key);
-        bento.feedback = item.name + ' 装进盒饭了，花了 ' + item.price + ' 分。';
+        bento.feedback = key === 'rice'
+          ? '大米饭铺好了，花了 ' + item.price + ' 分。现在可以放食材。'
+          : item.name + ' 购买成功，已经放进盒饭，花了 ' + item.price + ' 分。';
       }
       state.bento = bento;
       saveBento();
@@ -3039,6 +3197,17 @@
       return Array.isArray(questionBanks[kind]);
     }
 
+    function isStoryQuestKind(kind) {
+      return kind === 'reading';
+    }
+
+    function questRoundExplanation(kind) {
+      if (kind === 'reading') {
+        return '本轮讲解：读故事题时，先找人物和动作，再看时间顺序，最后用重复出现的词判断重点。遇到不确定的题，可以先圈线索，再说出自己的理由。';
+      }
+      return '';
+    }
+
     function createGame(kind, previousIndex) {
       const bank = questionBanks[kind] || [];
       if (bank.length && remainingDailyQuestionCount(kind) <= 0) {
@@ -3053,6 +3222,7 @@
           feedback: '',
           feedbackType: '',
           reward: '',
+          explanation: '',
           saved: true
         };
       }
@@ -3066,6 +3236,7 @@
         feedback: '',
         feedbackType: '',
         reward: '',
+        explanation: '',
         saved: false
       };
     }
@@ -3162,6 +3333,7 @@
             '<div class="play-kicker">' + (game.exhausted ? '今日已刷完' : '闯关完成') + '</div>',
             '<div class="play-title">' + (game.exhausted ? '换个小游戏' : escapeHtml(rewardName(kind)) + ' 到手') + '</div>',
             game.exhausted ? '' : '<div class="game-complete">这轮拿到 ' + game.score + ' 分。' + escapeHtml(game.reward || '表现很稳，给自己一个轻轻的击掌。') + '</div>',
+            game.explanation ? '<div class="game-complete">' + escapeHtml(game.explanation) + '</div>' : '',
             hasMoreToday ? '' : '<div class="game-complete">这类题今天已经全部出现过了。为了不重复，可以换一个小游戏，明天再来会刷新。</div>',
             renderQuestProgress(game, bank.length),
             '<div class="play-actions">',
@@ -3322,6 +3494,7 @@
         game.reward = game.score >= bank.length
           ? '连续闯完一轮，很有节奏。'
           : '完成比满分更重要，今天已经推进了。';
+        game.explanation = questRoundExplanation(kind);
         addAchievementRecord(kind, game, bank.length);
         renderHomePlayground();
         return;
@@ -3331,7 +3504,19 @@
       game.answered = false;
       game.feedback = '';
       game.feedbackType = '';
+      game.explanation = '';
       renderHomePlayground();
+    }
+
+    function skipStoryQuestion() {
+      const kind = state.selectedMission.kind;
+      if (!isStoryQuestKind(kind)) return false;
+      const game = getGame(kind);
+      game.answered = true;
+      game.feedback = '这题先放过，继续看下一题。';
+      game.feedbackType = 'try';
+      nextLevel();
+      return true;
     }
 
     function restartGame() {
@@ -3362,6 +3547,7 @@
       }
       if (action === 'done-play') {
         if (isQuestKind(state.selectedMission.kind)) {
+          if (skipStoryQuestion()) return;
           setPlayFeedback('可以先提交答案或写一句，再拿积分过关。', 'try');
           return;
         }
@@ -3448,6 +3634,26 @@
       return hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59 ? text : '';
     }
 
+    function timeToMinutes(value) {
+      const time = normalizeTimeValue(value);
+      if (!time) return null;
+      return Number.parseInt(time.slice(0, 2), 10) * 60 + Number.parseInt(time.slice(3, 5), 10);
+    }
+
+    function addMinutesToTime(value, minutes) {
+      const start = timeToMinutes(value);
+      if (start === null) return '';
+      const total = (start + Math.max(1, Number(minutes) || 15)) % (24 * 60);
+      return String(Math.floor(total / 60)).padStart(2, '0') + ':' + String(total % 60).padStart(2, '0');
+    }
+
+    function durationFromTimes(startTime, endTime) {
+      const start = timeToMinutes(startTime);
+      const end = timeToMinutes(endTime);
+      if (start === null || end === null || end <= start) return 0;
+      return end - start;
+    }
+
     function todayInputDate() {
       const date = new Date();
       return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
@@ -3455,14 +3661,20 @@
 
     function normalizePlanItem(item, index) {
       const type = item.type || (item.subject === '运动' ? 'sport' : 'learning');
+      const legacyMinutes = Math.max(1, Number(item.minutes) || 15);
+      const startTime = normalizeTimeValue(item.startTime || item.planTime || item.time);
+      const endTime = normalizeTimeValue(item.endTime) || (startTime ? addMinutesToTime(startTime, legacyMinutes) : '');
+      const duration = durationFromTimes(startTime, endTime);
       return {
         id: item.id || ('plan-' + Date.now() + '-' + index),
         type: planTypeByKey(type).key,
         title: item.title || '小计划',
-        minutes: Math.max(1, Number(item.minutes) || 15),
+        minutes: Math.max(1, duration || Number(item.minutes) || 15),
         startDate: normalizeDateValue(item.startDate),
         endDate: normalizeDateValue(item.endDate),
-        planTime: normalizeTimeValue(item.planTime || item.time),
+        startTime: startTime,
+        endTime: endTime,
+        planTime: startTime,
         status: normalizePlanStatus(item.statusKey || item.status),
         reason: item.reason || '',
         steps: Array.isArray(item.steps) && item.steps.length ? item.steps : defaultPlanSteps(type)
@@ -3524,7 +3736,10 @@
       const dates = item.startDate && item.endDate
         ? item.startDate + ' 至 ' + item.endDate
         : (item.startDate || item.endDate || '');
-      return [dates, item.planTime].filter(Boolean).join(' · ');
+      const times = item.startTime && item.endTime
+        ? item.startTime + ' - ' + item.endTime
+        : (item.startTime || item.planTime || item.endTime || '');
+      return [dates, times].filter(Boolean).join(' · ');
     }
 
     function planStats() {
@@ -3572,18 +3787,22 @@
       el('plan-form').innerHTML = [
         '<div class="plan-form">',
         '<input id="new-plan-title" class="plan-input" placeholder="新计划，比如：低运球 10 分钟" />',
-        '<div class="plan-form-row">',
+        '<div class="plan-form-row plan-type-row">',
         '<select id="new-plan-type" class="plan-select">',
         PLAN_TYPES.map(function (type) {
           return '<option value="' + type.key + '">' + type.label + '</option>';
         }).join(''),
         '</select>',
-        '<input id="new-plan-minutes" class="plan-input" type="number" min="3" max="60" value="15" />',
         '</div>',
-        '<div class="plan-form-row plan-form-row-three">',
-        '<label class="plan-field"><span>开始</span><input id="new-plan-start" class="plan-input" type="date" value="' + today + '" /></label>',
-        '<label class="plan-field"><span>结束</span><input id="new-plan-end" class="plan-input" type="date" value="' + today + '" /></label>',
-        '<label class="plan-field"><span>时间</span><input id="new-plan-time" class="plan-input" type="time" value="19:30" /></label>',
+        '<div class="plan-schedule-fields">',
+        '<div class="plan-form-row">',
+        '<label class="plan-field"><span>开始日期</span><input id="new-plan-start" class="plan-input" type="date" value="' + today + '" /></label>',
+        '<label class="plan-field"><span>结束日期</span><input id="new-plan-end" class="plan-input" type="date" value="' + today + '" /></label>',
+        '</div>',
+        '<div class="plan-form-row">',
+        '<label class="plan-field"><span>开始时间</span><input id="new-plan-start-time" class="plan-input" type="time" value="19:30" /></label>',
+        '<label class="plan-field"><span>结束时间</span><input id="new-plan-end-time" class="plan-input" type="time" value="19:50" /></label>',
+        '</div>',
         '</div>',
         '<button class="secondary" data-plan-action="add">加入计划</button>',
         '</div>'
@@ -3639,10 +3858,10 @@
     function addPlanItem() {
       const title = el('new-plan-title').value.trim();
       const type = el('new-plan-type').value;
-      const minutes = Number.parseInt(el('new-plan-minutes').value || '15', 10);
       const startDate = el('new-plan-start').value;
       const endDate = el('new-plan-end').value;
-      const planTime = el('new-plan-time').value;
+      const startTime = el('new-plan-start-time').value;
+      const endTime = el('new-plan-end-time').value;
       if (!title) {
         alert('先写一个计划名字。');
         return;
@@ -3651,14 +3870,18 @@
         alert('结束日期不能早于开始日期。');
         return;
       }
+      if (startTime && endTime && durationFromTimes(startTime, endTime) <= 0) {
+        alert('结束时间要晚于开始时间。');
+        return;
+      }
       state.planItems.unshift(normalizePlanItem({
         id: 'custom-' + Date.now(),
         type: type,
         title: title,
-        minutes: minutes,
         startDate: startDate,
         endDate: endDate,
-        planTime: planTime,
+        startTime: startTime,
+        endTime: endTime,
         status: 'todo',
         steps: defaultPlanSteps(type)
       }, 0));

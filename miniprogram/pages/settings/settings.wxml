@@ -28,10 +28,14 @@
         <view class="muted">用闯关积分解锁食材，按顾客要求装盒饭。</view>
       </view>
       <view class="bento-wallet">
-        <text>可用积分</text>
-        <text class="wallet-number">{{bento.availablePoints}}</text>
-        <text class="wallet-label">金币</text>
-        <text class="wallet-number">{{bento.availableCoins}}</text>
+        <view class="wallet-card points">
+          <text>积分</text>
+          <text class="wallet-number">{{bento.availablePoints}}</text>
+        </view>
+        <view class="wallet-card coins">
+          <text>金币</text>
+          <text class="wallet-number">{{bento.availableCoins}}</text>
+        </view>
       </view>
     </view>
 
@@ -42,7 +46,7 @@
           <view class="upgrade-meta">
             现在 {{bento.capacity.value}} 格 ·
             <text wx:if="{{bento.capacity.maxed}}">最多 11 格</text>
-            <text wx:else>下一级 {{bento.capacity.nextValue}} 格</text>
+            <text wx:else>下一级 {{bento.capacity.nextValue}} 格 · 需要 {{bento.capacity.price}} 金币</text>
           </view>
         </view>
         <button class="bento-buy" disabled="{{bento.capacity.disabled}}" bindtap="upgradeBentoCapacity">
@@ -50,25 +54,24 @@
         </button>
       </view>
       <view class="lunchbox">
-        <view class="lunchbox-title">空盒饭 · {{bento.capacity.value}} 格</view>
-        <view class="bento-slots">
-          <view class="{{item.className}}" wx:for="{{bento.lunchboxSlots}}" wx:key="id">
-            <image wx:if="{{item.filled}}" class="food-image" src="{{item.asset}}" mode="aspectFit" />
-            <text wx:else>{{item.mark}}</text>
+        <view class="lunchbox-title">{{bento.hasRice ? '盒饭' : '空盒饭'}} · {{bento.lunchbox.length}} / {{bento.capacity.value}}</view>
+        <view class="bento-plating">
+          <view wx:if="{{!bento.hasRice}}" class="bento-empty-plate" aria-label="空盒饭"></view>
+          <view wx:else class="bento-stack">
+            <view class="rice-bed">
+              <view class="rice-tile" wx:for="{{bento.riceTiles}}" wx:key="id">
+                <image class="food-image" src="{{item.asset}}" mode="aspectFit" />
+              </view>
+            </view>
+            <view wx:if="{{bento.lunchboxItems.length}}" class="bento-toppings">
+              <view class="{{item.className}}" wx:for="{{bento.lunchboxItems}}" wx:key="id">
+                <image class="food-image" src="{{item.asset}}" mode="aspectFit" />
+              </view>
+            </view>
           </view>
         </view>
       </view>
       <view class="bento-actions">
-        <button
-          class="bento-action"
-          wx:for="{{bento.unlockedIngredients}}"
-          wx:key="key"
-          data-key="{{item.key}}"
-          disabled="{{item.useDisabled}}"
-          bindtap="addBentoIngredient"
-        >
-          {{item.useButtonText}}
-        </button>
         <button class="bento-action" bindtap="clearBento">清空盒饭</button>
       </view>
     </view>
@@ -84,9 +87,12 @@
         <view>
           <view class="ingredient-name">{{item.name}}</view>
           <view class="ingredient-meta">等级 {{item.level}} · 解锁 {{item.price}} 分</view>
-          <view class="ingredient-meta">装入每次 {{item.price}} 分</view>
+          <view class="ingredient-meta">每次购买 {{item.price}} 分</view>
         </view>
-        <button class="bento-buy" disabled="{{item.disabled}}" data-key="{{item.key}}" bindtap="buyBentoIngredient">
+        <button wx:if="{{item.unlocked}}" class="bento-buy" disabled="{{item.useDisabled}}" data-key="{{item.key}}" bindtap="addBentoIngredient">
+          {{item.useButtonText}}
+        </button>
+        <button wx:else class="bento-buy" disabled="{{item.disabled}}" data-key="{{item.key}}" bindtap="buyBentoIngredient">
           {{item.buttonText}}
         </button>
       </view>

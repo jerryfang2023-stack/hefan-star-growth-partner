@@ -17,12 +17,12 @@ const learningModule = {
       kind: 'idiom',
       label: '猜诗词',
       title: '诗词小侦探',
-      desc: '看诗句，抓线索。',
+      desc: '猜作者，接下一句。',
       image: '/assets/game-poetry.jpg',
       visual: 'scroll',
       mark: '诗',
       meta: ['语文', '观察力'],
-      prompt: '盒饭，玩一局诗词小侦探。你给我一句公开古诗词线索，我来猜作者、意象或意思。',
+      prompt: '盒饭，玩一局诗词小侦探。你出作者题或下一句题，我来答。',
     },
     {
       kind: 'math',
@@ -118,44 +118,100 @@ const questionBanks = {
   ],
   idiom: [
     {
-      kicker: '诗词第 1 关',
-      title: '诗人是谁',
-      question: '“千磨万击还坚劲，任尔东西南北风。”这首《竹石》的作者是谁？',
-      answers: ['郑燮', '郑板桥'],
-      success: '对，是郑燮，也叫郑板桥。',
-      retry: '这位诗人也叫郑板桥。',
+      kicker: '语文第 1 关',
+      title: '作者是谁',
+      question: '《咏鹅》的作者是谁？',
+      answers: ['骆宾王'],
+      success: '对，是骆宾王。',
+      retry: '想想这首诗的作者是唐代小诗人。',
     },
     {
-      kicker: '诗词第 2 关',
-      title: '下一句',
-      question: '“春色满园关不住”的下一句是？',
-      answers: ['一枝红杏出墙来'],
-      success: '对，是“一枝红杏出墙来”。',
-      retry: '想想春天里从墙边探出来的是什么花枝。',
+      kicker: '语文第 2 关',
+      title: '续写下一句',
+      question: '“举头望明月”的下一句是？',
+      answers: ['低头思故乡'],
+      success: '对，是“低头思故乡”。',
+      retry: '这首是《静夜思》，下一句写想家。',
     },
     {
-      kicker: '诗词第 3 关',
-      title: '抓意象',
-      question: '“明月几时有，把酒问青天。”这里最明显的意象是什么？',
-      answers: ['明月', '月亮', '月'],
-      success: '对，是明月。抓住意象，理解诗就容易多了。',
-      retry: '先找这句里最亮、最像画面的那个词。',
+      kicker: '语文第 3 关',
+      title: '续写下一句',
+      question: '“白日依山尽”的下一句是？',
+      answers: ['黄河入海流'],
+      success: '对，是“黄河入海流”。',
+      retry: '下一句里有“黄河”和“大海”。',
     },
     {
-      kicker: '诗词第 4 关',
-      title: '判断季节',
-      question: '“接天莲叶无穷碧，映日荷花别样红。”写的是哪个季节？',
-      answers: ['夏天', '夏季', '夏'],
-      success: '对，是夏天。莲叶、荷花就是关键线索。',
-      retry: '荷花最常和哪个季节联系在一起？',
+      kicker: '语文第 4 关',
+      title: '作者是谁',
+      question: '《春晓》的作者是谁？',
+      answers: ['孟浩然'],
+      success: '对，是孟浩然。',
+      retry: '这首诗的作者是唐代诗人，名字三个字。',
     },
     {
-      kicker: '诗词第 5 关',
-      title: '看情绪',
-      question: '“劝君更尽一杯酒，西出阳关无故人。”更像在表达什么心情？',
-      answers: ['送别', '离别', '不舍', '惜别'],
-      success: '对，是送别时的不舍。',
-      retry: '朋友要去远方，诗人在劝他再喝一杯。',
+      kicker: '语文第 5 关',
+      title: '续写下一句',
+      question: '“小荷才露尖尖角”的下一句是？',
+      answers: ['早有蜻蜓立上头'],
+      success: '对，是“早有蜻蜓立上头”。',
+      retry: '下一句里有一只小昆虫停在上面。',
+    },
+    {
+      kicker: '语文第 6 关',
+      title: '作者是谁',
+      question: '“独在异乡为异客，每逢佳节倍思亲。”的作者是谁？',
+      answers: ['王维'],
+      success: '对，是王维。',
+      retry: '这位唐代诗人也写过《山居秋暝》。',
+    },
+    {
+      kicker: '语文第 7 关',
+      title: '续写下一句',
+      question: '“接天莲叶无穷碧”的下一句是？',
+      answers: ['映日荷花别样红'],
+      success: '对，是“映日荷花别样红”。',
+      retry: '下一句写阳光下的荷花。',
+    },
+    {
+      kicker: '语文第 8 关',
+      title: '作者是谁',
+      question: '“飞流直下三千尺，疑是银河落九天。”的作者是谁？',
+      answers: ['李白', '李太白'],
+      success: '对，是李白。',
+      retry: '这位诗人被称为“诗仙”。',
+    },
+    {
+      kicker: '语文第 9 关',
+      title: '续写下一句',
+      question: '“春风又绿江南岸”的下一句是？',
+      answers: ['明月何时照我还'],
+      success: '对，是“明月何时照我还”。',
+      retry: '下一句里有明月，也有归家的意思。',
+    },
+    {
+      kicker: '语文第 10 关',
+      title: '作者是谁',
+      question: '“横看成岭侧成峰，远近高低各不同。”的作者是谁？',
+      answers: ['苏轼', '苏东坡'],
+      success: '对，是苏轼。',
+      retry: '这位宋代诗人也叫苏东坡。',
+    },
+    {
+      kicker: '语文第 11 关',
+      title: '续写下一句',
+      question: '“千磨万击还坚劲”的下一句是？',
+      answers: ['任尔东西南北风'],
+      success: '对，是“任尔东西南北风”。',
+      retry: '下一句写东、西、南、北的风。',
+    },
+    {
+      kicker: '语文第 12 关',
+      title: '作者是谁',
+      question: '《石灰吟》的作者是谁？',
+      answers: ['于谦'],
+      success: '对，是于谦。',
+      retry: '这位明代诗人写下“要留清白在人间”。',
     },
   ],
   math: [
@@ -227,20 +283,55 @@ const questionBanks = {
   reading: [
     {
       kicker: '阅读第 1 关',
+      title: '一年级字词',
+      question: '读一句话，找出里面表示“谁”的词，比如“小猫在睡觉”里的“小猫”。',
+      notePlaceholder: '表示谁的词是...',
+      steps: ['先问“这句话写谁”。', '找到人、动物或事物。'],
+    },
+    {
+      kicker: '阅读第 2 关',
+      title: '一年级标点',
+      question: '看到句号“。”时，读句子应该停一下还是继续冲过去？',
+      notePlaceholder: '我觉得应该...',
+      steps: ['句号表示一句话结束。', '读到这里停一停。'],
+    },
+    {
+      kicker: '阅读第 3 关',
+      title: '二年级量词',
+      question: '给“鱼”选一个合适的量词：一（ ）鱼。你会填什么？',
+      notePlaceholder: '我会填...',
+      steps: ['先想生活里怎么说。', '可以说“一条鱼”。'],
+    },
+    {
+      kicker: '阅读第 4 关',
+      title: '二年级顺序',
+      question: '读一小段故事，找出“先发生”的一件事。',
+      notePlaceholder: '先发生的是...',
+      steps: ['找“先、然后、接着、最后”。', '没有这些词，就看句子顺序。'],
+    },
+    {
+      kicker: '阅读第 5 关',
       title: '看标题',
       question: '写下课文标题里最重要的一个词，再猜它可能写什么。',
       notePlaceholder: '关键词是...，我猜...',
       steps: ['标题常常藏着中心。', '先找名词或动词。'],
     },
     {
-      kicker: '阅读第 2 关',
+      kicker: '阅读第 6 关',
       title: '找重复词',
       question: '读一段课文，找一个重复出现或反复强调的词。',
       notePlaceholder: '重复词是...',
       steps: ['重复词通常很重要。', '可以是人物、地点、动作或心情。'],
     },
     {
-      kicker: '阅读第 3 关',
+      kicker: '阅读第 7 关',
+      title: '抓变化',
+      question: '人物或事情前后有什么变化？写一句。',
+      notePlaceholder: '变化是...',
+      steps: ['先看开头。', '再看结尾。', '比较中间发生了什么。'],
+    },
+    {
+      kicker: '阅读第 8 关',
       title: '诗句画面',
       question: '选一句古诗词，写下你脑子里出现的一个画面。',
       notePlaceholder: '我看到的画面是...',
@@ -347,6 +438,17 @@ function rewardName(kind) {
     reading: '阅读雷达徽章',
     preview: '预习小队长徽章',
   }[kind] || '闯关徽章';
+}
+
+function isStoryQuestKind(kind) {
+  return kind === 'reading';
+}
+
+function questRoundExplanation(kind) {
+  if (kind === 'reading') {
+    return '\u672c\u8f6e\u8bb2\u89e3\uff1a\u8bfb\u6545\u4e8b\u9898\u65f6\uff0c\u5148\u627e\u4eba\u7269\u548c\u52a8\u4f5c\uff0c\u518d\u770b\u65f6\u95f4\u987a\u5e8f\uff0c\u6700\u540e\u7528\u91cd\u590d\u51fa\u73b0\u7684\u8bcd\u5224\u65ad\u91cd\u70b9\u3002\u9047\u5230\u4e0d\u786e\u5b9a\u7684\u9898\uff0c\u53ef\u4ee5\u5148\u5708\u7ebf\u7d22\uff0c\u518d\u8bf4\u51fa\u81ea\u5df1\u7684\u7406\u7531\u3002';
+  }
+  return '';
 }
 
 function pointsForStreak(streak) {
@@ -488,6 +590,7 @@ Page({
           feedback: '',
           feedbackType: '',
           reward: '',
+          explanation: '',
           saved: true,
         };
         return this.gameState[kind];
@@ -502,6 +605,7 @@ Page({
         feedback: '',
         feedbackType: '',
         reward: '',
+        explanation: '',
         saved: false,
       };
     }
@@ -529,6 +633,7 @@ Page({
           score: game.score,
           streak: game.streak,
           progress: 100,
+          explanation: game.explanation || '',
         };
       }
 
@@ -538,6 +643,7 @@ Page({
         mode: 'quest',
         ...card,
         canRestart: remainingDailyQuestionCount(mission.kind) > 0,
+        canSkip: isStoryQuestKind(mission.kind),
         difficulty: difficultyLabel(card, game.level || 0),
         nextPoints,
         level: (game.level || 0) + 1,
@@ -690,6 +796,7 @@ Page({
     if ((game.level || 0) >= bank.length - 1) {
       game.complete = true;
       game.reward = game.score >= bank.length ? '连续闯完一轮，很有节奏。' : '完成比满分更重要，今天已经推进了。';
+      game.explanation = questRoundExplanation(mission.kind);
       writeAchievementRecord(mission.kind, mission, game, bank.length);
       this.refreshPlayground();
       return;
@@ -700,7 +807,18 @@ Page({
     game.answered = false;
     game.feedback = '';
     game.feedbackType = '';
+    game.explanation = '';
     this.refreshPlayground();
+  },
+
+  skipStoryQuestion() {
+    const mission = this.data.selectedMission;
+    if (!isStoryQuestKind(mission.kind)) return;
+    const game = this.getGame(mission.kind);
+    game.answered = true;
+    game.feedback = '\u8fd9\u9898\u5148\u653e\u8fc7\uff0c\u7ee7\u7eed\u770b\u4e0b\u4e00\u9898\u3002';
+    game.feedbackType = 'try';
+    this.nextLevel();
   },
 
   restartQuest() {
@@ -722,6 +840,7 @@ Page({
       feedback: '',
       feedbackType: '',
       reward: '',
+      explanation: '',
       saved: false,
     };
     this.refreshPlayground();

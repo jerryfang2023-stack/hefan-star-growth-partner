@@ -200,6 +200,10 @@ function canUnlockIngredient(bento, item) {
   return Boolean(previous && bento.unlocked.includes(previous.key));
 }
 
+function bentoHasRice(bento) {
+  return Boolean(bento && Array.isArray(bento.lunchbox) && bento.lunchbox.includes('rice'));
+}
+
 function decorateBento(achievements) {
   const bento = readBento();
   const availablePoints = availableBentoPoints(achievements, bento);
@@ -208,24 +212,37 @@ function decorateBento(achievements) {
   const capacity = bentoCapacity(capacityLevel);
   const upgradePrice = bentoUpgradePrice(capacityLevel);
   const full = bento.lunchbox.length >= capacity;
-  const lunchboxSlots = Array.from({ length: capacity }, (_, index) => {
-    const item = ingredientByKey(bento.lunchbox[index]);
-    return item
-      ? { id: `slot-${index}`, filled: true, key: item.key, mark: item.mark, asset: item.asset, className: `bento-piece ${item.key}` }
-      : { id: `slot-${index}`, filled: false, mark: '空', className: 'bento-slot' };
-  });
+  const hasRice = bentoHasRice(bento);
+  const riceItem = ingredientByKey('rice');
+  const riceTiles = riceItem
+    ? Array.from({ length: 9 }, (_, index) => ({ id: `rice-${index}`, asset: riceItem.asset }))
+    : [];
+  const lunchboxItems = bento.lunchbox
+    .filter((key) => key !== 'rice')
+    .map((key, index) => {
+      const item = ingredientByKey(key);
+      return item ? { id: `food-${index}-${key}`, key: item.key, asset: item.asset, className: `bento-piece ${item.key}` } : null;
+    })
+    .filter(Boolean);
   const ingredients = BENTO_INGREDIENTS.map((item) => {
     const unlocked = bento.unlocked.includes(item.key);
     const canStep = canUnlockIngredient(bento, item);
     const affordable = availablePoints >= item.price;
-    const useDisabled = !unlocked || full || !affordable;
+    const isRice = item.key === 'rice';
+    const useDisabled = !unlocked || full || !affordable || (isRice && hasRice) || (!isRice && !hasRice);
     return {
       ...item,
       unlocked,
       cardClass: `ingredient-card ${unlocked || (!unlocked && canStep && affordable) ? 'unlocked' : 'locked'}`,
       disabled: unlocked || !canStep || !affordable,
       useDisabled,
-      useButtonText: full ? '饭盒满了' : (affordable ? `装${item.name} · ${item.price}分` : '积分不足'),
+      useButtonText: full
+        ? '饭盒满了'
+        : (isRice && hasRice
+          ? '米饭已铺好'
+          : (!isRice && !hasRice
+            ? '先铺米饭'
+            : (affordable ? `${isRice ? '购买铺米饭' : '购买放置'} · ${item.price}分` : '积分不足'))),
       buttonText: unlocked ? '已解锁' : (!canStep ? '先解锁上一级' : (affordable ? `${item.price} 分解锁` : '积分不足')),
     };
   });
@@ -261,7 +278,9 @@ function decorateBento(achievements) {
         ? '已满级'
         : (availablePoints >= upgradePrice ? `${upgradePrice} 分升级` : '积分不足'),
     },
-    lunchboxSlots,
+    hasRice,
+    riceTiles,
+    lunchboxItems,
     ingredients,
     unlockedIngredients: ingredients.filter((item) => item.unlocked),
     customers,
@@ -381,14 +400,21 @@ Page({
     const bento = readBento();
     if (!item || !bento.unlocked.includes(key)) return;
     const capacity = bentoCapacity(bento.capacityLevel);
+    const hasRice = bentoHasRice(bento);
     if (bento.lunchbox.length >= capacity) {
       bento.feedback = '盒饭已经满了，升级容量或先包装。';
+    } else if (key === 'rice' && hasRice) {
+      bento.feedback = '米饭已经铺好了，接下来放食材。';
+    } else if (key !== 'rice' && !hasRice) {
+      bento.feedback = '先铺一层大米饭，再放其它食材。';
     } else if (availableBentoPoints(achievements, bento) < item.price) {
-      bento.feedback = '积分不够装这个食材，先去闯一关赚分。';
+      bento.feedback = '积分不够购买这个食材，先去闯一关赚分。';
     } else {
       bento.spentPoints += item.price;
       bento.lunchbox.push(key);
-      bento.feedback = `${item.name} 装进盒饭了。`;
+      bento.feedback = key === 'rice'
+        ? '大米饭铺好了。现在可以放食材。'
+        : `${item.name} 购买成功，已经放进盒饭。`;
     }
     this.refreshBento(bento);
   },
@@ -413,7 +439,7 @@ Page({
       } else {
         bento.coins = availableBentoCoins(bento) - price;
         bento.capacityLevel = level + 1;
-        bento.feedback = `饭盒升到 Lv.${bento.capacityLevel}，现在有 ${bentoCapacity(bento.capacityLevel)} 格。`;
+        bento.feedback = `花了 ${price} 金币，饭盒升到 Lv.${bento.capacityLevel}，现在有 ${bentoCapacity(bento.capacityLevel)} 格。`;
       }
     }
     this.refreshBento(bento);

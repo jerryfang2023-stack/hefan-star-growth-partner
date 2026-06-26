@@ -50,6 +50,26 @@ function normalizeTimeValue(value) {
   return /^\d{2}:\d{2}$/.test(String(value || '')) ? String(value) : '';
 }
 
+function timeToMinutes(value) {
+  const time = normalizeTimeValue(value);
+  if (!time) return null;
+  return Number(time.slice(0, 2)) * 60 + Number(time.slice(3, 5));
+}
+
+function addMinutesToTime(value, minutes) {
+  const start = timeToMinutes(value);
+  if (start === null) return '';
+  const total = (start + Math.max(1, Number(minutes) || 15)) % (24 * 60);
+  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+}
+
+function durationFromTimes(startTime, endTime) {
+  const start = timeToMinutes(startTime);
+  const end = timeToMinutes(endTime);
+  if (start === null || end === null || end <= start) return 0;
+  return end - start;
+}
+
 function todayInputDate() {
   const date = new Date();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -59,14 +79,20 @@ function todayInputDate() {
 
 function normalizePlanItem(item, index) {
   const type = item.type || (item.subject === '运动' ? 'sport' : 'learning');
+  const legacyMinutes = Math.max(1, Number(item.minutes) || 15);
+  const startTime = normalizeTimeValue(item.startTime || item.planTime || item.time);
+  const endTime = normalizeTimeValue(item.endTime) || (startTime ? addMinutesToTime(startTime, legacyMinutes) : '');
+  const duration = durationFromTimes(startTime, endTime);
   return {
     id: item.id || `plan-${Date.now()}-${index}`,
     type: planTypeByKey(type).key,
     title: item.title || '小计划',
-    minutes: Math.max(1, Number(item.minutes) || 15),
+    minutes: Math.max(1, duration || Number(item.minutes) || 15),
     startDate: normalizeDateValue(item.startDate),
     endDate: normalizeDateValue(item.endDate),
-    planTime: normalizeTimeValue(item.planTime || item.time),
+    startTime,
+    endTime,
+    planTime: startTime,
     status: normalizePlanStatus(item.statusKey || item.status),
     reason: item.reason || '',
     steps: Array.isArray(item.steps) && item.steps.length ? item.steps : defaultPlanSteps(type),
@@ -105,7 +131,8 @@ function decoratePlanItems(items) {
   return items.map((item) => {
     const type = planTypeByKey(item.type);
     const dates = item.startDate && item.endDate ? `${item.startDate} 至 ${item.endDate}` : (item.startDate || item.endDate || '');
-    const scheduleText = [dates, item.planTime].filter(Boolean).join(' · ');
+    const times = item.startTime && item.endTime ? `${item.startTime} - ${item.endTime}` : (item.startTime || item.planTime || item.endTime || '');
+    const scheduleText = [dates, times].filter(Boolean).join(' · ');
     return {
       ...item,
       typeLabel: type.label,
@@ -156,10 +183,10 @@ Page({
       title: '',
       typeIndex: 0,
       typeLabel: PLAN_TYPES[0].label,
-      minutes: 15,
       startDate: todayInputDate(),
       endDate: todayInputDate(),
-      planTime: '19:30',
+      startTime: '19:30',
+      endTime: '19:50',
     },
   },
 
@@ -222,10 +249,6 @@ Page({
     });
   },
 
-  onNewMinutesInput(event) {
-    this.setData({ 'newPlan.minutes': Number(event.detail.value) || 15 });
-  },
-
   onNewStartDateChange(event) {
     this.setData({ 'newPlan.startDate': event.detail.value });
   },
@@ -234,8 +257,12 @@ Page({
     this.setData({ 'newPlan.endDate': event.detail.value });
   },
 
-  onNewTimeChange(event) {
-    this.setData({ 'newPlan.planTime': event.detail.value });
+  onNewStartTimeChange(event) {
+    this.setData({ 'newPlan.startTime': event.detail.value });
+  },
+
+  onNewEndTimeChange(event) {
+    this.setData({ 'newPlan.endTime': event.detail.value });
   },
 
   addPlan() {
@@ -248,6 +275,10 @@ Page({
       wx.showToast({ title: '结束日期不能早于开始日期', icon: 'none' });
       return;
     }
+    if (this.data.newPlan.startTime && this.data.newPlan.endTime && durationFromTimes(this.data.newPlan.startTime, this.data.newPlan.endTime) <= 0) {
+      wx.showToast({ title: '结束时间要晚于开始时间', icon: 'none' });
+      return;
+    }
     const type = PLAN_TYPES[this.data.newPlan.typeIndex] || PLAN_TYPES[0];
     const current = wx.getStorageSync(PLAN_STORAGE_KEY);
     const items = Array.isArray(current) ? current : [];
@@ -255,10 +286,10 @@ Page({
       id: `custom-${Date.now()}`,
       type: type.key,
       title,
-      minutes: this.data.newPlan.minutes,
       startDate: this.data.newPlan.startDate,
       endDate: this.data.newPlan.endDate,
-      planTime: this.data.newPlan.planTime,
+      startTime: this.data.newPlan.startTime,
+      endTime: this.data.newPlan.endTime,
       status: 'todo',
       steps: defaultPlanSteps(type.key),
     }, 0));

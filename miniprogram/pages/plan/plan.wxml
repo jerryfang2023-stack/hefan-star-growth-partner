@@ -27,22 +27,28 @@
 
   <view class="plan-form">
     <input class="plan-input" placeholder="新计划，比如：低运球 10 分钟" value="{{newPlan.title}}" bindinput="onNewTitleInput" />
-    <view class="form-row">
+    <view class="form-row type-row">
       <picker range="{{planTypes}}" range-key="label" value="{{newPlan.typeIndex}}" bindchange="onNewTypeChange">
         <view class="plan-picker">{{newPlan.typeLabel}}</view>
       </picker>
-      <input class="plan-input" type="number" value="{{newPlan.minutes}}" bindinput="onNewMinutesInput" />
     </view>
-    <view class="form-row date-row">
-      <picker mode="date" value="{{newPlan.startDate}}" bindchange="onNewStartDateChange">
-        <view class="plan-picker date-picker">开始 {{newPlan.startDate}}</view>
-      </picker>
-      <picker mode="date" value="{{newPlan.endDate}}" bindchange="onNewEndDateChange">
-        <view class="plan-picker date-picker">结束 {{newPlan.endDate}}</view>
-      </picker>
-      <picker mode="time" value="{{newPlan.planTime}}" bindchange="onNewTimeChange">
-        <view class="plan-picker date-picker">时间 {{newPlan.planTime}}</view>
-      </picker>
+    <view class="plan-schedule-fields">
+      <view class="form-row">
+        <picker mode="date" value="{{newPlan.startDate}}" bindchange="onNewStartDateChange">
+          <view class="plan-picker date-picker">开始日期 {{newPlan.startDate}}</view>
+        </picker>
+        <picker mode="date" value="{{newPlan.endDate}}" bindchange="onNewEndDateChange">
+          <view class="plan-picker date-picker">结束日期 {{newPlan.endDate}}</view>
+        </picker>
+      </view>
+      <view class="form-row">
+        <picker mode="time" value="{{newPlan.startTime}}" bindchange="onNewStartTimeChange">
+          <view class="plan-picker date-picker">开始时间 {{newPlan.startTime}}</view>
+        </picker>
+        <picker mode="time" value="{{newPlan.endTime}}" bindchange="onNewEndTimeChange">
+          <view class="plan-picker date-picker">结束时间 {{newPlan.endTime}}</view>
+        </picker>
+      </view>
     </view>
     <button class="secondary-button" bindtap="addPlan">加入计划</button>
   </view>

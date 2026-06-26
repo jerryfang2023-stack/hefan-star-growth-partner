@@ -45,8 +45,17 @@
   gap: 14rpx;
 }
 
-.date-row {
-  grid-template-columns: 1fr 1fr 0.78fr;
+.type-row {
+  grid-template-columns: 1fr;
+}
+
+.plan-schedule-fields {
+  display: grid;
+  gap: 14rpx;
+  padding: 16rpx;
+  border: 1rpx solid rgba(220, 216, 251, 0.74);
+  border-radius: 8rpx;
+  background: rgba(255, 255, 255, 0.58);
 }
 
 .plan-input,

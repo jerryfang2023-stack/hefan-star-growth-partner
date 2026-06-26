@@ -40,6 +40,9 @@
       <view class="play-feedback try" wx:if="{{playground.exhaustedNote}}">
         {{playground.exhaustedNote}}
       </view>
+      <view class="game-complete" wx:if="{{playground.complete && playground.explanation}}">
+        {{playground.explanation}}
+      </view>
       <view class="mini-steps" wx:if="{{playground.steps.length}}">
         <view class="mini-step" wx:for="{{playground.steps}}" wx:key="*this">{{item}}</view>
       </view>
@@ -69,6 +72,13 @@
           bindtap="nextLevel"
         >
           {{playground.nextLabel}}
+        </button>
+        <button
+          wx:if="{{playground.mode === 'quest' && playground.canSkip && !playground.answered && !playground.complete}}"
+          class="secondary-button compact-button"
+          bindtap="skipStoryQuestion"
+        >
+          先这样
         </button>
         <button
           wx:if="{{playground.mode === 'quest' && playground.complete && playground.canRestart}}"
